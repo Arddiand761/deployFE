@@ -28,6 +28,25 @@ const ProfileSettings = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState("");
 
+  // TAMBAH states untuk password change
+  const [passwordData, setPasswordData] = useState({
+    currentPassword: "",
+    newPassword: "",
+    confirmPassword: "",
+  });
+  const [passwordError, setPasswordError] = useState("");
+  const [passwordSuccess, setPasswordSuccess] = useState("");
+  const [isPasswordLoading, setIsPasswordLoading] = useState(false);
+
+  // TAMBAH states untuk delete account
+  const [deleteAccountData, setDeleteAccountData] = useState({
+    username: "",
+    password: "",
+  });
+  const [deleteAccountError, setDeleteAccountError] = useState("");
+  const [isDeleteLoading, setIsDeleteLoading] = useState(false);
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+
   const [profileData, setProfileData] = useState({
     yourName: "",
     userName: "",
@@ -185,6 +204,184 @@ const ProfileSettings = () => {
       </div>
     );
   }
+
+  // TAMBAH function untuk update password
+  const handlePasswordUpdate = async (e) => {
+    e.preventDefault();
+    setIsPasswordLoading(true);
+    setPasswordError("");
+    setPasswordSuccess("");
+
+    // Validasi
+    if (!passwordData.currentPassword.trim()) {
+      setPasswordError("Password saat ini wajib diisi.");
+      setIsPasswordLoading(false);
+      return;
+    }
+
+    if (!passwordData.newPassword.trim()) {
+      setPasswordError("Password baru wajib diisi.");
+      setIsPasswordLoading(false);
+      return;
+    }
+
+    if (passwordData.newPassword.length < 6) {
+      setPasswordError("Password baru minimal 6 karakter.");
+      setIsPasswordLoading(false);
+      return;
+    }
+
+    if (passwordData.newPassword !== passwordData.confirmPassword) {
+      setPasswordError("Konfirmasi password tidak cocok.");
+      setIsPasswordLoading(false);
+      return;
+    }
+
+    if (passwordData.currentPassword === passwordData.newPassword) {
+      setPasswordError("Password baru harus berbeda dari password lama.");
+      setIsPasswordLoading(false);
+      return;
+    }
+
+    try {
+      const token = localStorage.getItem("token");
+      if (!token) {
+        throw new Error("Token tidak ditemukan. Silakan login ulang.");
+      }
+
+      const response = await fetch(`${BASE_URL}/update-password`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({
+          username: profileData.userName,
+          oldPassword: passwordData.currentPassword,
+          newPassword: passwordData.newPassword,
+        }),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(
+          data.error || data.message || "Gagal mengupdate password"
+        );
+      }
+
+      // Success
+      setPasswordSuccess("✅ Password berhasil diupdate!");
+      setPasswordData({
+        currentPassword: "",
+        newPassword: "",
+        confirmPassword: "",
+      });
+
+      // Clear success message after 5 seconds
+      setTimeout(() => {
+        setPasswordSuccess("");
+      }, 5000);
+    } catch (error) {
+      console.error("Error updating password:", error);
+      setPasswordError(
+        error.message || "Terjadi kesalahan saat mengupdate password"
+      );
+    } finally {
+      setIsPasswordLoading(false);
+    }
+  };
+
+  // TAMBAH function untuk delete account
+  const handleDeleteAccount = async (e) => {
+    e.preventDefault();
+    setIsDeleteLoading(true);
+    setDeleteAccountError("");
+
+    // Validasi
+    if (!deleteAccountData.username.trim()) {
+      setDeleteAccountError("Username wajib diisi.");
+      setIsDeleteLoading(false);
+      return;
+    }
+
+    if (!deleteAccountData.password.trim()) {
+      setDeleteAccountError("Password wajib diisi.");
+      setIsDeleteLoading(false);
+      return;
+    }
+
+    // Validasi username harus sama dengan username saat ini
+    if (deleteAccountData.username !== profileData.userName) {
+      setDeleteAccountError("Username tidak cocok dengan akun Anda.");
+      setIsDeleteLoading(false);
+      return;
+    }
+
+    try {
+      const token = localStorage.getItem("token");
+      if (!token) {
+        throw new Error("Token tidak ditemukan. Silakan login ulang.");
+      }
+
+      const response = await fetch(`${BASE_URL}/delete-user`, {
+        method: "DELETE",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({
+          username: deleteAccountData.username,
+          password: deleteAccountData.password,
+        }),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.error || data.message || "Gagal menghapus akun");
+      }
+
+      // Success - Clear storage and redirect to login
+      localStorage.removeItem("token");
+      localStorage.removeItem("profileData");
+      localStorage.clear();
+
+      alert("✅ Akun berhasil dihapus. Anda akan diarahkan ke halaman login.");
+
+      // Redirect to login page
+      window.location.href = "/login";
+    } catch (error) {
+      console.error("Error deleting account:", error);
+      setDeleteAccountError(
+        error.message || "Terjadi kesalahan saat menghapus akun"
+      );
+    } finally {
+      setIsDeleteLoading(false);
+    }
+  };
+
+  // TAMBAH function untuk handle input password
+  const handlePasswordInputChange = (e) => {
+    const { name, value } = e.target;
+    setPasswordData((prev) => ({ ...prev, [name]: value }));
+
+    // Clear errors when user starts typing
+    if (passwordError) {
+      setPasswordError("");
+    }
+  };
+
+  // TAMBAH function untuk handle input delete account
+  const handleDeleteInputChange = (e) => {
+    const { name, value } = e.target;
+    setDeleteAccountData((prev) => ({ ...prev, [name]: value }));
+
+    // Clear errors when user starts typing
+    if (deleteAccountError) {
+      setDeleteAccountError("");
+    }
+  };
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -438,68 +635,159 @@ const ProfileSettings = () => {
             </form>
           )}
 
+          {/* UPDATE Security Tab */}
           {activeTab === "security" && (
-            <div className="space-y-6">
-              <h3 className="text-lg font-medium text-gray-900">
-                Pengaturan Keamanan
-              </h3>
-              <p className="text-gray-600 text-sm">
-                Kelola password dan pengaturan keamanan akun Anda.
-              </p>
+            <div className="space-y-8">
+              <div>
+                <h3 className="text-lg font-medium text-gray-900 mb-2">
+                  Pengaturan Keamanan
+                </h3>
+                <p className="text-gray-600 text-sm">
+                  Kelola password dan pengaturan keamanan akun Anda.
+                </p>
+              </div>
 
-              <form className="space-y-4">
-                <div>
-                  <label
-                    htmlFor="currentPassword"
-                    className="block text-sm font-medium text-gray-700 mb-1"
-                  >
-                    Password Saat Ini
-                  </label>
-                  <input
-                    type="password"
-                    id="currentPassword"
-                    className="w-full md:w-1/2 border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 shadow-sm text-sm"
-                    placeholder="********"
-                  />
-                </div>
-                <div>
-                  <label
-                    htmlFor="newPassword"
-                    className="block text-sm font-medium text-gray-700 mb-1"
-                  >
-                    Password Baru
-                  </label>
-                  <input
-                    type="password"
-                    id="newPassword"
-                    className="w-full md:w-1/2 border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 shadow-sm text-sm"
-                    placeholder="********"
-                  />
-                </div>
-                <div>
-                  <label
-                    htmlFor="confirmPassword"
-                    className="block text-sm font-medium text-gray-700 mb-1"
-                  >
-                    Konfirmasi Password Baru
-                  </label>
-                  <input
-                    type="password"
-                    id="confirmPassword"
-                    className="w-full md:w-1/2 border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 shadow-sm text-sm"
-                    placeholder="********"
-                  />
-                </div>
+              {/* UPDATE PASSWORD SECTION */}
+              <div className="border border-gray-200 rounded-lg p-6">
+                <h4 className="text-md font-medium text-gray-900 mb-4">
+                  Ubah Password
+                </h4>
 
-                <div className="flex justify-start pt-4">
-                  <button
-                    type="button"
-                    className="bg-emerald-600 hover:bg-emerald-700 text-white font-semibold py-2 px-6 rounded-lg shadow-md focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:ring-offset-2 transition-colors duration-300 transform hover:scale-105"
-                  >
-                    Update Password
-                  </button>
-                </div>
-              </form>
+                {/* Success Message */}
+                {passwordSuccess && (
+                  <div className="mb-4 p-4 bg-green-50 border border-green-200 text-green-700 rounded-lg">
+                    <p className="text-sm font-medium">{passwordSuccess}</p>
+                  </div>
+                )}
+
+                {/* Error Message */}
+                {passwordError && (
+                  <div className="mb-4 p-4 bg-red-50 border border-red-200 text-red-700 rounded-lg">
+                    <p className="text-sm font-medium">{passwordError}</p>
+                  </div>
+                )}
+
+                <form onSubmit={handlePasswordUpdate} className="space-y-4">
+                  <div>
+                    <label
+                      htmlFor="currentPassword"
+                      className="block text-sm font-medium text-gray-700 mb-1"
+                    >
+                      Password Saat Ini *
+                    </label>
+                    <input
+                      type="password"
+                      name="currentPassword"
+                      id="currentPassword"
+                      value={passwordData.currentPassword}
+                      onChange={handlePasswordInputChange}
+                      className="w-full md:w-2/3 border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 shadow-sm text-sm"
+                      placeholder="Masukkan password saat ini"
+                      required
+                      disabled={isPasswordLoading}
+                    />
+                  </div>
+
+                  <div>
+                    <label
+                      htmlFor="newPassword"
+                      className="block text-sm font-medium text-gray-700 mb-1"
+                    >
+                      Password Baru *
+                    </label>
+                    <input
+                      type="password"
+                      name="newPassword"
+                      id="newPassword"
+                      value={passwordData.newPassword}
+                      onChange={handlePasswordInputChange}
+                      className="w-full md:w-2/3 border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 shadow-sm text-sm"
+                      placeholder="Masukkan password baru (min. 6 karakter)"
+                      required
+                      disabled={isPasswordLoading}
+                      minLength="6"
+                    />
+                  </div>
+
+                  <div>
+                    <label
+                      htmlFor="confirmPassword"
+                      className="block text-sm font-medium text-gray-700 mb-1"
+                    >
+                      Konfirmasi Password Baru *
+                    </label>
+                    <input
+                      type="password"
+                      name="confirmPassword"
+                      id="confirmPassword"
+                      value={passwordData.confirmPassword}
+                      onChange={handlePasswordInputChange}
+                      className="w-full md:w-2/3 border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 shadow-sm text-sm"
+                      placeholder="Konfirmasi password baru"
+                      required
+                      disabled={isPasswordLoading}
+                    />
+                  </div>
+
+                  <div className="flex justify-start pt-2">
+                    <button
+                      type="submit"
+                      disabled={isPasswordLoading}
+                      className={`bg-emerald-600 hover:bg-emerald-700 text-white font-semibold py-2 px-6 rounded-lg shadow-md focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:ring-offset-2 transition-all duration-200 ${
+                        isPasswordLoading
+                          ? "opacity-70 cursor-not-allowed"
+                          : "transform hover:scale-105"
+                      }`}
+                    >
+                      {isPasswordLoading ? (
+                        <div className="flex items-center">
+                          <svg
+                            className="animate-spin -ml-1 mr-2 h-4 w-4 text-white"
+                            xmlns="http://www.w3.org/2000/svg"
+                            fill="none"
+                            viewBox="0 0 24 24"
+                          >
+                            <circle
+                              className="opacity-25"
+                              cx="12"
+                              cy="12"
+                              r="10"
+                              stroke="currentColor"
+                              strokeWidth="4"
+                            ></circle>
+                            <path
+                              className="opacity-75"
+                              fill="currentColor"
+                              d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                            ></path>
+                          </svg>
+                          Mengupdate...
+                        </div>
+                      ) : (
+                        "Update Password"
+                      )}
+                    </button>
+                  </div>
+                </form>
+              </div>
+
+              {/* DANGER ZONE - DELETE ACCOUNT */}
+              <div className="border border-red-200 rounded-lg p-6 bg-red-50">
+                <h4 className="text-md font-medium text-red-900 mb-2">
+                  ⚠️ Danger Zone
+                </h4>
+                <p className="text-sm text-red-700 mb-4">
+                  Tindakan ini akan menghapus akun Anda secara permanen dan
+                  tidak dapat dibatalkan.
+                </p>
+
+                <button
+                  onClick={() => setShowDeleteModal(true)}
+                  className="bg-red-600 hover:bg-red-700 text-white font-semibold py-2 px-4 rounded-lg shadow-md focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 transition-colors duration-200"
+                >
+                  Hapus Akun
+                </button>
+              </div>
 
               {/* Two-Factor Authentication Section */}
               <div className="border-t pt-6 mt-6">
@@ -525,6 +813,138 @@ const ProfileSettings = () => {
           )}
         </div>
       </main>
+
+      {/* DELETE ACCOUNT MODAL */}
+      {showDeleteModal && (
+        <div className="fixed inset-0 flex items-center justify-center z-50 bg-black bg-opacity-50">
+          <div className="bg-white rounded-lg shadow-xl p-6 max-w-md w-full mx-4">
+            <div className="flex items-center mb-4">
+              <div className="flex-shrink-0">
+                <svg
+                  className="h-6 w-6 text-red-600"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth="2"
+                    d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z"
+                  />
+                </svg>
+              </div>
+              <div className="ml-3">
+                <h3 className="text-lg font-medium text-gray-900">
+                  Konfirmasi Hapus Akun
+                </h3>
+              </div>
+            </div>
+
+            <div className="mb-4">
+              <p className="text-sm text-gray-700 mb-4">
+                <strong>PERINGATAN:</strong> Tindakan ini akan menghapus akun
+                Anda secara permanen beserta semua data yang terkait. Proses ini
+                tidak dapat dibatalkan.
+              </p>
+              <p className="text-sm text-gray-600 mb-4">
+                Untuk melanjutkan, masukkan username dan password Anda:
+              </p>
+            </div>
+
+            {/* Error Message */}
+            {deleteAccountError && (
+              <div className="mb-4 p-3 bg-red-50 border border-red-200 text-red-700 rounded-lg">
+                <p className="text-sm font-medium">{deleteAccountError}</p>
+              </div>
+            )}
+
+            <form onSubmit={handleDeleteAccount} className="space-y-4">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Username *
+                </label>
+                <input
+                  type="text"
+                  name="username"
+                  value={deleteAccountData.username}
+                  onChange={handleDeleteInputChange}
+                  placeholder={`Ketik "${profileData.userName}" untuk konfirmasi`}
+                  className="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-red-500 text-sm"
+                  required
+                  disabled={isDeleteLoading}
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Password *
+                </label>
+                <input
+                  type="password"
+                  name="password"
+                  value={deleteAccountData.password}
+                  onChange={handleDeleteInputChange}
+                  placeholder="Masukkan password Anda"
+                  className="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-red-500 text-sm"
+                  required
+                  disabled={isDeleteLoading}
+                />
+              </div>
+
+              <div className="flex gap-3 pt-4">
+                <button
+                  type="button"
+                  onClick={() => {
+                    setShowDeleteModal(false);
+                    setDeleteAccountData({ username: "", password: "" });
+                    setDeleteAccountError("");
+                  }}
+                  className="flex-1 bg-gray-200 hover:bg-gray-300 text-gray-800 font-semibold px-4 py-2 rounded-lg transition-colors"
+                  disabled={isDeleteLoading}
+                >
+                  Batal
+                </button>
+                <button
+                  type="submit"
+                  disabled={isDeleteLoading}
+                  className={`flex-1 bg-red-600 hover:bg-red-700 text-white font-semibold py-2 px-4 rounded-lg shadow-md transition-all duration-200 ${
+                    isDeleteLoading ? "opacity-70 cursor-not-allowed" : ""
+                  }`}
+                >
+                  {isDeleteLoading ? (
+                    <div className="flex items-center justify-center">
+                      <svg
+                        className="animate-spin -ml-1 mr-2 h-4 w-4 text-white"
+                        xmlns="http://www.w3.org/2000/svg"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                      >
+                        <circle
+                          className="opacity-25"
+                          cx="12"
+                          cy="12"
+                          r="10"
+                          stroke="currentColor"
+                          strokeWidth="4"
+                        ></circle>
+                        <path
+                          className="opacity-75"
+                          fill="currentColor"
+                          d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                        ></path>
+                      </svg>
+                      Menghapus...
+                    </div>
+                  ) : (
+                    "🗑️ Hapus Akun"
+                  )}
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

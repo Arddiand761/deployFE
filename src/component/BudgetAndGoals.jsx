@@ -1,7 +1,9 @@
+/* eslint-disable no-unused-vars */
+/* eslint-disable react-hooks/exhaustive-deps */
 import React, { useState, useEffect } from "react";
 import Navbar from "./sidebar";
 
-const BASE_URL = "https://backendhapi-production.up.railway.app"; // Railway API URL
+const BASE_URL = "https://backendhapi-production.up.railway.app";
 
 const BudgetAndGoals = () => {
   const [goals, setGoals] = useState([]);
@@ -28,7 +30,11 @@ const BudgetAndGoals = () => {
   const [totalExpense, setTotalExpense] = useState(0);
   const [transactions, setTransactions] = useState([]);
 
-  // Function to fetch goals from Railway API
+  // Delete States
+  const [deleteMessage, setDeleteMessage] = useState("");
+  const [isDeletingGoal, setIsDeletingGoal] = useState(null);
+
+  // Fetch goals from API
   const fetchGoalsFromAPI = async () => {
     try {
       const token = localStorage.getItem("token");
@@ -36,7 +42,6 @@ const BudgetAndGoals = () => {
         throw new Error("Token tidak ditemukan. Silakan login ulang.");
       }
 
-      console.log("Fetching goals from Railway API...");
       const response = await fetch(`${BASE_URL}/goals`, {
         method: "GET",
         headers: {
@@ -46,7 +51,6 @@ const BudgetAndGoals = () => {
       });
 
       const data = await response.json();
-      console.log("Goals API Response:", data);
 
       if (!response.ok) {
         throw new Error(
@@ -76,7 +80,6 @@ const BudgetAndGoals = () => {
         userId: goal.user_id,
       }));
 
-      console.log("Formatted goals:", formattedGoals);
       setGoals(formattedGoals);
     } catch (error) {
       console.error("Error fetching goals:", error);
@@ -84,7 +87,7 @@ const BudgetAndGoals = () => {
     }
   };
 
-  // Function to fetch transactions
+  // Fetch transactions
   const fetchTransactions = async () => {
     try {
       const token = localStorage.getItem("token");
@@ -92,7 +95,6 @@ const BudgetAndGoals = () => {
         throw new Error("Token tidak ditemukan. Silakan login ulang.");
       }
 
-      console.log("Fetching transactions from Railway API...");
       const response = await fetch(`${BASE_URL}/transactions`, {
         method: "GET",
         headers: {
@@ -102,7 +104,6 @@ const BudgetAndGoals = () => {
       });
 
       const data = await response.json();
-      console.log("Transactions API Response:", data);
 
       if (!response.ok) {
         throw new Error(data.error || "Gagal mengambil data transaksi");
@@ -113,7 +114,6 @@ const BudgetAndGoals = () => {
         : data.transactions || [];
       setTransactions(transactionList);
 
-      // Hitung total income dan expense
       calculateTotals(transactionList);
     } catch (error) {
       console.error("Error fetching transactions:", error);
@@ -122,7 +122,7 @@ const BudgetAndGoals = () => {
     }
   };
 
-  // Function to calculate totals
+  // Calculate totals
   const calculateTotals = (transactionList) => {
     const incomes = transactionList
       .filter((t) => t.type === "INCOME")
@@ -136,15 +136,13 @@ const BudgetAndGoals = () => {
     setTotalExpense(expenses);
   };
 
-  // Function to create goal via Railway API
+  // Create goal via API
   const createGoalAPI = async (goalData) => {
     try {
       const token = localStorage.getItem("token");
       if (!token) {
         throw new Error("Token tidak ditemukan. Silakan login ulang.");
       }
-
-      console.log("Creating goal:", goalData);
 
       const response = await fetch(`${BASE_URL}/goals`, {
         method: "POST",
@@ -156,7 +154,6 @@ const BudgetAndGoals = () => {
       });
 
       const data = await response.json();
-      console.log("Create Goal API Response:", data);
 
       if (!response.ok) {
         throw new Error(
@@ -171,7 +168,7 @@ const BudgetAndGoals = () => {
     }
   };
 
-  // UPDATE Function to add funds to goal via API (menggunakan PUT method)
+  // Add funds to goal via API
   const addFundsToGoalAPI = async (goalId, amount) => {
     try {
       const token = localStorage.getItem("token");
@@ -179,22 +176,18 @@ const BudgetAndGoals = () => {
         throw new Error("Token tidak ditemukan. Silakan login ulang.");
       }
 
-      console.log(`Adding funds to goal ${goalId}:`, amount);
-
-      // PUT request ke Railway API dengan format yang benar
       const response = await fetch(`${BASE_URL}/goals/${goalId}`, {
-        method: "PUT", // Menggunakan PUT method
+        method: "PUT",
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`, // Bearer token auth
+          Authorization: `Bearer ${token}`,
         },
         body: JSON.stringify({
-          amount_to_add: parseFloat(amount), // Format input sesuai backend
+          amount_to_add: parseFloat(amount),
         }),
       });
 
       const data = await response.json();
-      console.log("Add Funds API Response:", data);
 
       if (!response.ok) {
         throw new Error(
@@ -206,6 +199,114 @@ const BudgetAndGoals = () => {
     } catch (error) {
       console.error("Error adding funds to goal:", error);
       throw error;
+    }
+  };
+
+  // Delete goal via API
+  const deleteGoal = async (goalId) => {
+    try {
+      const token = localStorage.getItem("token");
+      if (!token) {
+        throw new Error("Token tidak ditemukan. Silakan login ulang.");
+      }
+
+      const response = await fetch(`${BASE_URL}/goals/${goalId}`, {
+        method: "DELETE",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      let data;
+      try {
+        data = await response.json();
+      } catch (jsonError) {
+        const textResponse = await response.text();
+        data = { message: textResponse || "Goal deleted successfully" };
+      }
+
+      if (!response.ok) {
+        throw new Error(
+          data.error ||
+            data.message ||
+            `HTTP ${response.status}: ${response.statusText}`
+        );
+      }
+
+      // Remove goal from state
+      setGoals((prevGoals) => prevGoals.filter((goal) => goal.id !== goalId));
+      setDeleteMessage("✅ Goal berhasil dihapus!");
+
+      setTimeout(() => {
+        setDeleteMessage("");
+      }, 3000);
+
+      return data;
+    } catch (error) {
+      console.error("Delete goal error:", error);
+      setDeleteMessage(`❌ Error: ${error.message}`);
+      setTimeout(() => setDeleteMessage(""), 5000);
+      throw error;
+    }
+  };
+
+  // Handle bulk delete berdasarkan index
+  const handleBulkDelete = async () => {
+    if (goals.length === 0) {
+      alert("Tidak ada goals yang tersedia untuk dihapus.");
+      return;
+    }
+
+    // Tampilkan daftar goals dengan index
+    let goalsList = "DAFTAR GOALS:\n\n";
+    goals.forEach((goal, index) => {
+      goalsList += `${index + 1}. ${goal.name}\n`;
+      goalsList += `   💰 ${formatRupiah(goal.currentAmount)} / ${formatRupiah(
+        goal.targetAmount
+      )}\n`;
+      goalsList += `   📅 Target: ${formatDate(goal.targetDate)}\n\n`;
+    });
+
+    const indexInput = window.prompt(
+      `${goalsList}` +
+        `Masukkan nomor goal yang ingin dihapus (1-${goals.length}):\n\n` +
+        `⚠️ PERINGATAN: Goal akan dihapus permanen!`
+    );
+
+    if (indexInput === null) return;
+
+    const goalIndex = parseInt(indexInput) - 1;
+
+    // Validasi input
+    if (isNaN(goalIndex) || goalIndex < 0 || goalIndex >= goals.length) {
+      alert(`❌ Input tidak valid! Masukkan angka 1-${goals.length}`);
+      return;
+    }
+
+    const selectedGoal = goals[goalIndex];
+
+    // Konfirmasi final
+    const confirmed = window.confirm(
+      `🗑️ KONFIRMASI HAPUS GOAL\n\n` +
+        `Nomor: ${goalIndex + 1}\n` +
+        `Nama: ${selectedGoal.name}\n` +
+        `Current: ${formatRupiah(selectedGoal.currentAmount)}\n` +
+        `Target: ${formatRupiah(selectedGoal.targetAmount)}\n\n` +
+        `⚠️ Tindakan ini tidak dapat dibatalkan!\n` +
+        `Yakin ingin menghapus goal ini?`
+    );
+
+    if (confirmed) {
+      setIsDeletingGoal(selectedGoal.id);
+
+      try {
+        await deleteGoal(selectedGoal.id);
+      } catch (error) {
+        console.error("Gagal menghapus goal:", error);
+      } finally {
+        setIsDeletingGoal(null);
+      }
     }
   };
 
@@ -243,7 +344,6 @@ const BudgetAndGoals = () => {
       return;
     }
 
-    // Prepare data sesuai format API
     const goalData = {
       goal_name: newGoalName.trim(),
       target_amount: parseFloat(newGoalTarget),
@@ -260,7 +360,6 @@ const BudgetAndGoals = () => {
       setAddGoalError("");
       setIsAddingGoal(false);
 
-      // Refresh goals
       fetchGoalsFromAPI();
     } catch (error) {
       setAddGoalError(
@@ -271,7 +370,7 @@ const BudgetAndGoals = () => {
     }
   };
 
-  // TAMBAH Handle Add Funds
+  // Handle Add Funds
   const handleAddFunds = async (e) => {
     e.preventDefault();
     setIsAddingFunds(true);
@@ -301,7 +400,6 @@ const BudgetAndGoals = () => {
       setIsAddFundsModalOpen(false);
       setSelectedGoal(null);
 
-      // Refresh goals
       fetchGoalsFromAPI();
     } catch (error) {
       setAddFundsError(
@@ -320,7 +418,6 @@ const BudgetAndGoals = () => {
     }
   };
 
-  // Handle add funds amount input (hanya angka)
   const handleAddFundsAmountChange = (e) => {
     const value = e.target.value;
     if (/^\d*\.?\d*$/.test(value)) {
@@ -335,7 +432,7 @@ const BudgetAndGoals = () => {
     return tomorrow.toISOString().split("T")[0];
   };
 
-  // Open Add Funds Modal
+  // Open/Close Add Funds Modal
   const openAddFundsModal = (goal) => {
     setSelectedGoal(goal);
     setIsAddFundsModalOpen(true);
@@ -343,7 +440,6 @@ const BudgetAndGoals = () => {
     setAddFundsError("");
   };
 
-  // Close Add Funds Modal
   const closeAddFundsModal = () => {
     setIsAddFundsModalOpen(false);
     setSelectedGoal(null);
@@ -441,6 +537,48 @@ const BudgetAndGoals = () => {
           <h1 className="text-3xl font-bold text-gray-800">Budget & Goals</h1>
         </header>
 
+        {/* Delete Message Display */}
+        {deleteMessage && (
+          <div
+            className={`mt-4 p-4 rounded-lg border ${
+              deleteMessage.includes("Error")
+                ? "bg-red-50 border-red-200 text-red-700"
+                : "bg-green-50 border-green-200 text-green-700"
+            }`}
+          >
+            <div className="flex items-center">
+              <div className="flex-shrink-0">
+                {deleteMessage.includes("Error") ? (
+                  <svg
+                    className="h-5 w-5 text-red-400"
+                    viewBox="0 0 20 20"
+                    fill="currentColor"
+                  >
+                    <path
+                      fillRule="evenodd"
+                      d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z"
+                    />
+                  </svg>
+                ) : (
+                  <svg
+                    className="h-5 w-5 text-green-400"
+                    viewBox="0 0 20 20"
+                    fill="currentColor"
+                  >
+                    <path
+                      fillRule="evenodd"
+                      d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
+                    />
+                  </svg>
+                )}
+              </div>
+              <div className="ml-3">
+                <p className="text-sm font-medium">{deleteMessage}</p>
+              </div>
+            </div>
+          </div>
+        )}
+
         {/* Budget Summary Section */}
         <section className="mt-8">
           <div className="bg-white p-6 rounded-xl shadow-lg">
@@ -474,27 +612,100 @@ const BudgetAndGoals = () => {
         <section className="mt-10">
           <div className="flex justify-between items-center mb-4">
             <h2 className="text-2xl font-bold text-gray-800">My Goals</h2>
-            <button
-              onClick={() => setIsAddingGoal(!isAddingGoal)}
-              className="bg-emerald-600 text-white font-semibold px-5 py-2 rounded-lg shadow-md hover:bg-emerald-700 transition-colors flex items-center gap-2"
-            >
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                width="20"
-                height="20"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2.5"
-                strokeLinecap="round"
-                strokeLinejoin="round"
+
+            {/* Buttons Group */}
+            <div className="flex gap-2">
+              {/* Delete Button */}
+              <button
+                onClick={handleBulkDelete}
+                disabled={goals.length === 0 || isDeletingGoal !== null}
+                className={`flex items-center gap-2 px-4 py-2 rounded-lg font-semibold transition-all duration-200 ${
+                  goals.length === 0 || isDeletingGoal !== null
+                    ? "bg-gray-300 text-gray-500 cursor-not-allowed"
+                    : "bg-red-600 text-white hover:bg-red-700 shadow-md hover:shadow-lg"
+                }`}
+                title={
+                  goals.length === 0
+                    ? "Tidak ada goals untuk dihapus"
+                    : "Hapus goal berdasarkan nomor"
+                }
               >
-                <line x1="12" y1="5" x2="12" y2="19"></line>
-                <line x1="5" y1="12" x2="19" y2="12"></line>
-              </svg>
-              {isAddingGoal ? "Batal" : "Buat Goal Baru"}
-            </button>
+                {isDeletingGoal !== null ? (
+                  <svg
+                    className="animate-spin h-4 w-4"
+                    xmlns="http://www.w3.org/2000/svg"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                  >
+                    <circle
+                      className="opacity-25"
+                      cx="12"
+                      cy="12"
+                      r="10"
+                      stroke="currentColor"
+                      strokeWidth="4"
+                    ></circle>
+                    <path
+                      className="opacity-75"
+                      fill="currentColor"
+                      d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                    ></path>
+                  </svg>
+                ) : (
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="18"
+                    height="18"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  >
+                    <polyline points="3,6 5,6 21,6"></polyline>
+                    <path d="m19,6v14a2,2 0 0,1-2,2H7a2,2 0 0,1-2-2V6m3,0V4a2,2 0 0,1,2-2h4a2,2 0 0,1,2,2v2"></path>
+                    <line x1="10" y1="11" x2="10" y2="17"></line>
+                    <line x1="14" y1="11" x2="14" y2="17"></line>
+                  </svg>
+                )}
+                {isDeletingGoal !== null
+                  ? "Menghapus..."
+                  : `Hapus Goal (${goals.length})`}
+              </button>
+
+              {/* Add Goal Button */}
+              <button
+                onClick={() => setIsAddingGoal(!isAddingGoal)}
+                className="bg-emerald-600 text-white font-semibold px-5 py-2 rounded-lg shadow-md hover:bg-emerald-700 transition-colors flex items-center gap-2"
+              >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="20"
+                  height="20"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2.5"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                >
+                  <line x1="12" y1="5" x2="12" y2="19"></line>
+                  <line x1="5" y1="12" x2="19" y2="12"></line>
+                </svg>
+                {isAddingGoal ? "Batal" : "Buat Goal Baru"}
+              </button>
+            </div>
           </div>
+
+          {/* Goals Counter */}
+          {goals.length > 0 && (
+            <div className="mb-4 p-3 bg-blue-50 border border-blue-200 rounded-lg">
+              <p className="text-blue-800 text-sm">
+                📊 Total Goals: <strong>{goals.length}</strong> goals aktif
+              </p>
+            </div>
+          )}
 
           {/* Add Goal Form */}
           {isAddingGoal && (
@@ -503,7 +714,6 @@ const BudgetAndGoals = () => {
                 Buat Goal Baru
               </h3>
 
-              {/* Error Message */}
               {addGoalError && (
                 <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg mb-4">
                   <p className="text-sm font-medium">{addGoalError}</p>
@@ -514,7 +724,6 @@ const BudgetAndGoals = () => {
                 onSubmit={handleAddGoal}
                 className="grid md:grid-cols-3 gap-4"
               >
-                {/* Goal Name */}
                 <div>
                   <label className="block text-sm font-semibold text-gray-700 mb-2">
                     Nama Goal *
@@ -530,7 +739,6 @@ const BudgetAndGoals = () => {
                   />
                 </div>
 
-                {/* Target Amount */}
                 <div>
                   <label className="block text-sm font-semibold text-gray-700 mb-2">
                     Target Dana *
@@ -557,7 +765,6 @@ const BudgetAndGoals = () => {
                   )}
                 </div>
 
-                {/* Target Date */}
                 <div>
                   <label className="block text-sm font-semibold text-gray-700 mb-2">
                     Target Tanggal *
@@ -573,7 +780,6 @@ const BudgetAndGoals = () => {
                   />
                 </div>
 
-                {/* Submit Button */}
                 <div className="md:col-span-3 flex justify-end pt-2">
                   <button
                     type="submit"
@@ -620,13 +826,20 @@ const BudgetAndGoals = () => {
           {/* Goals List */}
           <div className="space-y-4">
             {goals.length > 0 ? (
-              goals.map((goal) => (
+              goals.map((goal, index) => (
                 <div
                   key={goal.id}
-                  className="bg-white p-6 rounded-xl shadow-lg"
+                  className="bg-white p-6 rounded-xl shadow-lg relative"
                 >
-                  <div className="flex justify-between items-start mb-4">
-                    <div>
+                  {/* Index Badge */}
+                  <div className="absolute top-4 left-4">
+                    <span className="inline-flex items-center justify-center w-8 h-8 text-xs font-bold text-white bg-emerald-600 rounded-full">
+                      {index + 1}
+                    </span>
+                  </div>
+
+                  <div className="flex justify-between items-start mb-4 pl-12">
+                    <div className="flex-1">
                       <h3 className="text-xl font-semibold text-gray-800">
                         {goal.name}
                       </h3>
@@ -635,6 +848,7 @@ const BudgetAndGoals = () => {
                         {goal.status}
                       </p>
                     </div>
+
                     <div className="text-right">
                       <p className="text-2xl font-bold text-emerald-600">
                         {Math.min(
@@ -665,26 +879,23 @@ const BudgetAndGoals = () => {
                     />
                   </div>
 
-                  {/* Goal Completed */}
-                  {goal.currentAmount >= goal.targetAmount && (
+                  {/* Goal Status Messages */}
+                  {goal.currentAmount >= goal.targetAmount ? (
                     <div className="mt-4 p-3 bg-green-50 border border-green-200 rounded-lg">
                       <p className="text-green-800 text-sm font-medium">
                         🎉 Goal tercapai! Selamat atas pencapaian Anda!
                       </p>
                     </div>
-                  )}
-
-                  {/* Goal Info */}
-                  {goal.currentAmount < goal.targetAmount && (
+                  ) : (
                     <div className="mt-4 p-3 bg-blue-50 border border-blue-200 rounded-lg">
                       <p className="text-blue-800 text-sm">
                         💡 <strong>Tips:</strong> Tambahkan dana goal melalui
-                        transaksi pemasukan untuk mencapai target Anda!
+                        tombol di bawah ini!
                       </p>
                     </div>
                   )}
 
-                  {/* Add Funds Button - TAMBAH TOMBOL UNTUK MENAMBAH DANA KE GOAL */}
+                  {/* Add Funds Button */}
                   <div className="mt-4 flex justify-end">
                     <button
                       onClick={() => openAddFundsModal(goal)}
@@ -739,15 +950,14 @@ const BudgetAndGoals = () => {
           </div>
         </section>
 
-        {/* Add Funds Modal - TAMBAH MODAL UNTUK MENAMBAH DANA KE GOAL */}
+        {/* Add Funds Modal */}
         {isAddFundsModalOpen && (
-          <div className="fixed inset-0 flex items-center justify-center z-50">
-            <div className="bg-white rounded-lg shadow-lg p-6 max-w-sm w-full">
+          <div className="fixed inset-0 flex items-center justify-center z-50 bg-black bg-opacity-50">
+            <div className="bg-white rounded-lg shadow-lg p-6 max-w-sm w-full mx-4">
               <h3 className="text-lg font-semibold text-gray-800 mb-4">
                 Tambah Dana ke Goal
               </h3>
 
-              {/* Error Message */}
               {addFundsError && (
                 <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg mb-4">
                   <p className="text-sm font-medium">{addFundsError}</p>
@@ -777,7 +987,7 @@ const BudgetAndGoals = () => {
                   </p>
                 </div>
 
-                {/* Add Funds Amount */}
+                {/* Amount Input */}
                 <div className="mb-4">
                   <label className="block text-sm font-semibold text-gray-700 mb-2">
                     Jumlah Dana *
@@ -803,19 +1013,24 @@ const BudgetAndGoals = () => {
                   )}
                 </div>
 
-                {/* Submit Button */}
-                <div className="flex justify-end">
+                {/* Buttons */}
+                <div className="flex gap-2">
+                  <button
+                    type="button"
+                    onClick={closeAddFundsModal}
+                    className="flex-1 bg-gray-200 hover:bg-gray-300 text-gray-800 font-semibold px-4 py-2 rounded-lg transition-colors"
+                  >
+                    Batal
+                  </button>
                   <button
                     type="submit"
                     disabled={isAddingFunds}
-                    className={`bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded-lg shadow-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-all duration-200 ${
-                      isAddingFunds
-                        ? "opacity-70 cursor-not-allowed"
-                        : "transform hover:scale-105"
+                    className={`flex-1 bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded-lg shadow-md transition-all duration-200 ${
+                      isAddingFunds ? "opacity-70 cursor-not-allowed" : ""
                     }`}
                   >
                     {isAddingFunds ? (
-                      <div className="flex items-center">
+                      <div className="flex items-center justify-center">
                         <svg
                           className="animate-spin -ml-1 mr-2 h-4 w-4 text-white"
                           xmlns="http://www.w3.org/2000/svg"
@@ -844,16 +1059,6 @@ const BudgetAndGoals = () => {
                   </button>
                 </div>
               </form>
-
-              {/* Close Button */}
-              <div className="mt-4">
-                <button
-                  onClick={closeAddFundsModal}
-                  className="w-full bg-gray-200 hover:bg-gray-300 text-gray-800 font-semibold px-4 py-2 rounded-lg transition-colors"
-                >
-                  Tutup
-                </button>
-              </div>
             </div>
           </div>
         )}

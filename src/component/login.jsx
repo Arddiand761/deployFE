@@ -162,7 +162,7 @@ const Login = () => {
   const PrivateRoute = ({ children }) => {
     const token = localStorage.getItem("token"); // atau "isLoggedIn"
     if (!token) {
-      return <Navigate to="/" />;
+      return <Navigate to="/home" />;
     }
     return children;
   };

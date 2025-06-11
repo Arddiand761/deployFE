@@ -746,9 +746,26 @@ const HomePage = () => {
 
           {/* Tambah Goal Button */}
           <div className="mt-6 pt-4 border-t border-gray-200">
-            <button className="w-full bg-emerald-50 hover:bg-emerald-100 text-emerald-700 font-medium py-3 px-4 rounded-lg border-2 border-dashed border-emerald-300 transition-all duration-200">
-              + Tambah Goal Baru
-            </button>
+            <a
+              href="/goals"
+              className="w-full bg-emerald-50 hover:bg-emerald-100 text-emerald-700 font-medium py-3 px-4 rounded-lg border-2 border-dashed border-emerald-300 transition-all duration-200 flex items-center justify-center gap-2"
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="20"
+                height="20"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              >
+                <line x1="12" y1="5" x2="12" y2="19"></line>
+                <line x1="5" y1="12" x2="19" y2="12"></line>
+              </svg>
+              Tambah Goal Baru
+            </a>
           </div>
         </div>
 
@@ -996,9 +1013,6 @@ const HomePage = () => {
             </div>
           )}
         </div>
-
-        {/* Konten lainnya */}
-        {/* ... existing content ... */}
       </main>
     </div>
   );
