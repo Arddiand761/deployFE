@@ -53,9 +53,9 @@ const Navbar = () => {
     console.log("Successfully logged out");
   };
 
-  const toggleMobileMenu = () => {
-    setIsMobileMenuOpen(!isMobileMenuOpen);
-  };
+  // const toggleMobileMenu = () => {
+  //   setIsMobileMenuOpen(!isMobileMenuOpen);
+  // };
 
   const menuItems = [
     { name: "Profile", icon: <User size={18} />, path: "/profile" },
@@ -104,117 +104,31 @@ const Navbar = () => {
           ))}
         </div>
 
-        {/* Desktop Logout Button */}
+        {/* Logout Button - BOTH DESKTOP & MOBILE */}
         <button
           onClick={handleLogout}
-          className="hidden md:flex items-center gap-2 px-3 py-2 rounded-lg transition-all duration-200 hover:bg-red-600 bg-red-500"
+          className="flex items-center gap-2 px-3 py-2 rounded-lg transition-all duration-200 hover:bg-red-600 active:bg-red-700 bg-red-500 text-white font-medium shadow-md touch-manipulation transform active:scale-95"
         >
           <LogOut size={18} />
-          <span className="font-medium hidden lg:inline">Log Out</span>
-        </button>
-
-        {/* Mobile Burger Button */}
-        <button
-          onClick={toggleMobileMenu}
-          className="md:hidden flex items-center justify-center w-10 h-10 rounded-lg hover:bg-emerald-800 transition-colors duration-200"
-          aria-label="Toggle mobile menu"
-        >
-          {isMobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
+          <span className="font-medium hidden sm:inline">Log Out</span>
         </button>
       </nav>
 
-      {/* Mobile Menu Overlay */}
-      {isMobileMenuOpen && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 z-40 md:hidden">
-          <div
-            className="mobile-menu-container fixed top-16 right-0 w-64 h-full bg-white shadow-xl transform transition-transform duration-300 ease-in-out"
-            style={{
-              transform: isMobileMenuOpen
-                ? "translateX(0)"
-                : "translateX(100%)",
-            }}
-          >
-            {/* Mobile Menu Header */}
-            <div className="bg-emerald-700 text-white p-4">
-              <div className="flex items-center gap-3">
-                <img
-                  src="SecondaryLogo.svg"
-                  alt="BudgetEase Logo"
-                  className="h-8 w-8"
-                  onError={(e) =>
-                    (e.target.src =
-                      "https://placehold.co/32x32/10b981/ffffff?text=BE")
-                  }
-                />
-                <div>
-                  <h3 className="font-bold text-lg">BudgetEase</h3>
-                  <p className="text-emerald-200 text-sm">Menu Navigation</p>
-                </div>
-              </div>
-            </div>
-
-            {/* Mobile Menu Items */}
-            <div className="py-4">
-              {menuItems.map((item, idx) => (
-                <Link
-                  key={idx}
-                  to={item.path}
-                  onClick={() => setIsMobileMenuOpen(false)}
-                  className={`flex items-center gap-3 px-6 py-4 text-gray-700 hover:bg-emerald-50 hover:text-emerald-700 transition-all duration-200 border-l-4 border-transparent ${
-                    location.pathname === item.path
-                      ? "bg-emerald-50 text-emerald-700 border-emerald-500 font-semibold"
-                      : ""
-                  }`}
-                >
-                  <div
-                    className={`p-2 rounded-lg ${
-                      location.pathname === item.path
-                        ? "bg-emerald-100"
-                        : "bg-gray-100"
-                    }`}
-                  >
-                    {item.icon}
-                  </div>
-                  <span className="font-medium">{item.name}</span>
-                </Link>
-              ))}
-            </div>
-
-            {/* Mobile Menu Footer */}
-            <div className="absolute bottom-0 left-0 right-0 p-4 border-t border-gray-200">
-              <button
-                onClick={handleLogout}
-                className="w-full flex items-center justify-center gap-3 px-4 py-3 bg-red-500 hover:bg-red-600 text-white rounded-lg transition-all duration-200 font-medium"
-              >
-                <LogOut size={18} />
-                <span>Log Out</span>
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* Mobile Bottom Navigation (Alternative) - Optional */}
+      {/* Mobile Bottom Navigation */}
       {isMobile && (
-        <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 px-4 py-2 z-30 md:hidden">
+        <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 px-2 py-2 z-30 md:hidden shadow-lg">
           <div className="flex justify-around">
-            {menuItems.slice(0, 4).map((item, idx) => (
+            {menuItems.map((item, idx) => (
               <Link
                 key={idx}
                 to={item.path}
-                className={`flex flex-col items-center py-2 px-3 rounded-lg transition-all duration-200 ${
+                className={`flex flex-col items-center py-2 px-3 rounded-lg transition-all duration-200 touch-manipulation ${
                   location.pathname === item.path
-                    ? "text-emerald-600"
+                    ? "text-emerald-600 bg-emerald-50"
                     : "text-gray-500 hover:text-emerald-600"
                 }`}
               >
-                <div
-                  className={`p-1 rounded-lg ${
-                    location.pathname === item.path ? "bg-emerald-50" : ""
-                  }`}
-                >
-                  {item.icon}
-                </div>
+                <div className="p-1.5 rounded-lg">{item.icon}</div>
                 <span className="text-xs font-medium mt-1 text-center">
                   {item.name.split(" ")[0]} {/* First word only */}
                 </span>

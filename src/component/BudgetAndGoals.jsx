@@ -532,25 +532,29 @@ const BudgetAndGoals = () => {
   return (
     <>
       <Navbar />
-      <div className="bg-gray-100 min-h-screen pt-24 px-4 md:px-10 pb-10">
-        <header>
-          <h1 className="text-3xl font-bold text-gray-800">Budget & Goals</h1>
+      {/* MAIN CONTAINER - FIXED MOBILE PADDING */}
+      <div className="bg-gray-100 min-h-screen pt-16 pb-24 sm:pt-20 sm:pb-8 lg:pt-24 px-3 sm:px-6 lg:px-10">
+        {/* HEADER - MOBILE OPTIMIZED */}
+        <header className="mb-4 sm:mb-6">
+          <h1 className="text-2xl sm:text-3xl font-bold text-gray-800 text-center sm:text-left">
+            Budget & Goals
+          </h1>
         </header>
 
-        {/* Delete Message Display */}
+        {/* Delete Message Display - MOBILE RESPONSIVE */}
         {deleteMessage && (
           <div
-            className={`mt-4 p-4 rounded-lg border ${
+            className={`mb-4 p-3 sm:p-4 rounded-lg border mx-1 sm:mx-0 ${
               deleteMessage.includes("Error")
                 ? "bg-red-50 border-red-200 text-red-700"
                 : "bg-green-50 border-green-200 text-green-700"
             }`}
           >
-            <div className="flex items-center">
-              <div className="flex-shrink-0">
+            <div className="flex items-start gap-3">
+              <div className="flex-shrink-0 mt-0.5">
                 {deleteMessage.includes("Error") ? (
                   <svg
-                    className="h-5 w-5 text-red-400"
+                    className="h-4 w-4 sm:h-5 sm:w-5 text-red-400"
                     viewBox="0 0 20 20"
                     fill="currentColor"
                   >
@@ -561,7 +565,7 @@ const BudgetAndGoals = () => {
                   </svg>
                 ) : (
                   <svg
-                    className="h-5 w-5 text-green-400"
+                    className="h-4 w-4 sm:h-5 sm:w-5 text-green-400"
                     viewBox="0 0 20 20"
                     fill="currentColor"
                   >
@@ -572,35 +576,43 @@ const BudgetAndGoals = () => {
                   </svg>
                 )}
               </div>
-              <div className="ml-3">
-                <p className="text-sm font-medium">{deleteMessage}</p>
+              <div className="flex-1 min-w-0">
+                <p className="text-xs sm:text-sm font-medium break-words">
+                  {deleteMessage}
+                </p>
               </div>
             </div>
           </div>
         )}
 
-        {/* Budget Summary Section */}
-        <section className="mt-8">
-          <div className="bg-white p-6 rounded-xl shadow-lg">
-            <h3 className="text-xl font-semibold text-gray-700 border-b pb-4">
+        {/* Budget Summary Section - MOBILE RESPONSIVE */}
+        <section className="mb-6 sm:mb-8">
+          <div className="bg-white p-4 sm:p-6 rounded-xl shadow-lg mx-1 sm:mx-0">
+            <h3 className="text-lg sm:text-xl font-semibold text-gray-700 border-b pb-3 sm:pb-4 mb-4">
               Ringkasan Budget Bulan Ini
             </h3>
-            <div className="mt-4 grid md:grid-cols-3 gap-6 text-center">
-              <div>
-                <p className="text-sm text-gray-500">Pemasukan</p>
-                <span className="text-2xl font-semibold text-gray-800">
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 sm:gap-6 text-center">
+              <div className="p-3 sm:p-0">
+                <p className="text-xs sm:text-sm text-gray-500 mb-1">
+                  Pemasukan
+                </p>
+                <span className="text-xl sm:text-2xl font-semibold text-green-600 break-all">
                   {formatRupiah(totalIncome)}
                 </span>
               </div>
-              <div>
-                <p className="text-sm text-gray-500">Pengeluaran</p>
-                <span className="text-2xl font-semibold text-gray-800">
+              <div className="p-3 sm:p-0">
+                <p className="text-xs sm:text-sm text-gray-500 mb-1">
+                  Pengeluaran
+                </p>
+                <span className="text-xl sm:text-2xl font-semibold text-red-600 break-all">
                   {formatRupiah(totalExpense)}
                 </span>
               </div>
-              <div className="md:border-l md:pl-6">
-                <p className="text-sm text-gray-500">Sisa Dana Bisa Dipakai</p>
-                <span className="text-2xl font-bold text-teal-600">
+              <div className="p-3 sm:p-0 sm:border-l sm:pl-6">
+                <p className="text-xs sm:text-sm text-gray-500 mb-1">
+                  Sisa Dana Bisa Dipakai
+                </p>
+                <span className="text-xl sm:text-2xl font-bold text-teal-600 break-all">
                   {formatRupiah(totalIncome - totalExpense)}
                 </span>
               </div>
@@ -608,21 +620,24 @@ const BudgetAndGoals = () => {
           </div>
         </section>
 
-        {/* Goals Section */}
-        <section className="mt-10">
-          <div className="flex justify-between items-center mb-4">
-            <h2 className="text-2xl font-bold text-gray-800">My Goals</h2>
+        {/* Goals Section - MOBILE OPTIMIZED */}
+        <section>
+          {/* HEADER WITH BUTTONS - MOBILE RESPONSIVE */}
+          <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-3 sm:gap-0 mb-4">
+            <h2 className="text-xl sm:text-2xl font-bold text-gray-800 text-center sm:text-left">
+              My Goals
+            </h2>
 
-            {/* Buttons Group */}
-            <div className="flex gap-2">
-              {/* Delete Button */}
+            {/* Buttons Group - MOBILE STACKED */}
+            <div className="flex flex-col sm:flex-row gap-2 sm:gap-2">
+              {/* Delete Button - MOBILE FULL WIDTH */}
               <button
                 onClick={handleBulkDelete}
                 disabled={goals.length === 0 || isDeletingGoal !== null}
-                className={`flex items-center gap-2 px-4 py-2 rounded-lg font-semibold transition-all duration-200 ${
+                className={`w-full sm:w-auto flex items-center justify-center gap-2 px-4 py-3 sm:py-2 rounded-lg font-semibold transition-all duration-200 touch-manipulation text-sm ${
                   goals.length === 0 || isDeletingGoal !== null
                     ? "bg-gray-300 text-gray-500 cursor-not-allowed"
-                    : "bg-red-600 text-white hover:bg-red-700 shadow-md hover:shadow-lg"
+                    : "bg-red-600 text-white hover:bg-red-700 active:bg-red-800 shadow-md transform active:scale-95"
                 }`}
                 title={
                   goals.length === 0
@@ -654,8 +669,8 @@ const BudgetAndGoals = () => {
                 ) : (
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
-                    width="18"
-                    height="18"
+                    width="16"
+                    height="16"
                     viewBox="0 0 24 24"
                     fill="none"
                     stroke="currentColor"
@@ -669,20 +684,25 @@ const BudgetAndGoals = () => {
                     <line x1="14" y1="11" x2="14" y2="17"></line>
                   </svg>
                 )}
-                {isDeletingGoal !== null
-                  ? "Menghapus..."
-                  : `Hapus Goal (${goals.length})`}
+                <span className="hidden xs:inline">
+                  {isDeletingGoal !== null
+                    ? "Menghapus..."
+                    : `Hapus Goal (${goals.length})`}
+                </span>
+                <span className="xs:hidden">
+                  {isDeletingGoal !== null ? "Menghapus..." : "Hapus"}
+                </span>
               </button>
 
-              {/* Add Goal Button */}
+              {/* Add Goal Button - MOBILE FULL WIDTH */}
               <button
                 onClick={() => setIsAddingGoal(!isAddingGoal)}
-                className="bg-emerald-600 text-white font-semibold px-5 py-2 rounded-lg shadow-md hover:bg-emerald-700 transition-colors flex items-center gap-2"
+                className="w-full sm:w-auto bg-emerald-600 text-white font-semibold px-4 py-3 sm:py-2 rounded-lg shadow-md hover:bg-emerald-700 active:bg-emerald-800 transition-all duration-200 flex items-center justify-center gap-2 touch-manipulation text-sm transform active:scale-95"
               >
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
-                  width="20"
-                  height="20"
+                  width="18"
+                  height="18"
                   viewBox="0 0 24 24"
                   fill="none"
                   stroke="currentColor"
@@ -698,34 +718,34 @@ const BudgetAndGoals = () => {
             </div>
           </div>
 
-          {/* Goals Counter */}
+          {/* Goals Counter - MOBILE RESPONSIVE */}
           {goals.length > 0 && (
-            <div className="mb-4 p-3 bg-blue-50 border border-blue-200 rounded-lg">
-              <p className="text-blue-800 text-sm">
+            <div className="mb-4 p-3 bg-blue-50 border border-blue-200 rounded-lg mx-1 sm:mx-0">
+              <p className="text-blue-800 text-xs sm:text-sm text-center sm:text-left">
                 📊 Total Goals: <strong>{goals.length}</strong> goals aktif
               </p>
             </div>
           )}
 
-          {/* Add Goal Form */}
+          {/* Add Goal Form - MOBILE RESPONSIVE */}
           {isAddingGoal && (
-            <div className="bg-white p-6 rounded-xl shadow-lg mb-6">
-              <h3 className="text-lg font-semibold text-gray-800 mb-4">
+            <div className="bg-white p-4 sm:p-6 rounded-xl shadow-lg mb-6 mx-1 sm:mx-0">
+              <h3 className="text-base sm:text-lg font-semibold text-gray-800 mb-4">
                 Buat Goal Baru
               </h3>
 
               {addGoalError && (
-                <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg mb-4">
-                  <p className="text-sm font-medium">{addGoalError}</p>
+                <div className="bg-red-50 border border-red-200 text-red-700 px-3 sm:px-4 py-3 rounded-lg mb-4">
+                  <p className="text-xs sm:text-sm font-medium break-words">
+                    {addGoalError}
+                  </p>
                 </div>
               )}
 
-              <form
-                onSubmit={handleAddGoal}
-                className="grid md:grid-cols-3 gap-4"
-              >
+              <form onSubmit={handleAddGoal} className="space-y-4">
+                {/* MOBILE STACKED FORM */}
                 <div>
-                  <label className="block text-sm font-semibold text-gray-700 mb-2">
+                  <label className="block text-xs sm:text-sm font-semibold text-gray-700 mb-2">
                     Nama Goal *
                   </label>
                   <input
@@ -733,14 +753,14 @@ const BudgetAndGoals = () => {
                     value={newGoalName}
                     onChange={(e) => setNewGoalName(e.target.value)}
                     placeholder="Contoh: Membeli baju baru"
-                    className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500"
+                    className="w-full border border-gray-300 rounded-lg px-3 py-2.5 sm:py-2 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 touch-manipulation"
                     required
                     disabled={isCreatingGoal}
                   />
                 </div>
 
                 <div>
-                  <label className="block text-sm font-semibold text-gray-700 mb-2">
+                  <label className="block text-xs sm:text-sm font-semibold text-gray-700 mb-2">
                     Target Dana *
                   </label>
                   <div className="relative">
@@ -752,13 +772,13 @@ const BudgetAndGoals = () => {
                       value={newGoalTarget}
                       onChange={handleTargetChange}
                       placeholder="200000"
-                      className="w-full border border-gray-300 rounded-lg pl-12 pr-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500"
+                      className="w-full border border-gray-300 rounded-lg pl-12 pr-3 py-2.5 sm:py-2 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 touch-manipulation"
                       required
                       disabled={isCreatingGoal}
                     />
                   </div>
                   {newGoalTarget && (
-                    <p className="text-xs text-gray-500 mt-1">
+                    <p className="text-xs text-gray-500 mt-1 break-words">
                       {parseFloat(newGoalTarget || 0).toLocaleString("id-ID")}{" "}
                       Rupiah
                     </p>
@@ -766,7 +786,7 @@ const BudgetAndGoals = () => {
                 </div>
 
                 <div>
-                  <label className="block text-sm font-semibold text-gray-700 mb-2">
+                  <label className="block text-xs sm:text-sm font-semibold text-gray-700 mb-2">
                     Target Tanggal *
                   </label>
                   <input
@@ -774,24 +794,24 @@ const BudgetAndGoals = () => {
                     value={newGoalDate}
                     onChange={(e) => setNewGoalDate(e.target.value)}
                     min={getMinDate()}
-                    className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500"
+                    className="w-full border border-gray-300 rounded-lg px-3 py-2.5 sm:py-2 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 touch-manipulation"
                     required
                     disabled={isCreatingGoal}
                   />
                 </div>
 
-                <div className="md:col-span-3 flex justify-end pt-2">
+                <div className="flex justify-center sm:justify-end pt-2">
                   <button
                     type="submit"
                     disabled={isCreatingGoal}
-                    className={`bg-emerald-600 hover:bg-emerald-700 text-white font-semibold py-2 px-6 rounded-lg shadow-md focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:ring-offset-2 transition-all duration-200 ${
+                    className={`w-full sm:w-auto bg-emerald-600 hover:bg-emerald-700 active:bg-emerald-800 text-white font-semibold py-3 sm:py-2 px-6 rounded-lg shadow-md focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:ring-offset-2 transition-all duration-200 touch-manipulation ${
                       isCreatingGoal
                         ? "opacity-70 cursor-not-allowed"
-                        : "transform hover:scale-105"
+                        : "transform active:scale-95"
                     }`}
                   >
                     {isCreatingGoal ? (
-                      <div className="flex items-center">
+                      <div className="flex items-center justify-center">
                         <svg
                           className="animate-spin -ml-1 mr-2 h-4 w-4 text-white"
                           xmlns="http://www.w3.org/2000/svg"
@@ -823,107 +843,110 @@ const BudgetAndGoals = () => {
             </div>
           )}
 
-          {/* Goals List */}
+          {/* Goals List - MOBILE RESPONSIVE */}
           <div className="space-y-4">
             {goals.length > 0 ? (
               goals.map((goal, index) => (
                 <div
                   key={goal.id}
-                  className="bg-white p-6 rounded-xl shadow-lg relative"
+                  className="bg-white p-4 sm:p-6 rounded-xl shadow-lg relative mx-1 sm:mx-0"
                 >
-                  {/* Index Badge */}
-                  <div className="absolute top-4 left-4">
-                    <span className="inline-flex items-center justify-center w-8 h-8 text-xs font-bold text-white bg-emerald-600 rounded-full">
+                  {/* Index Badge - MOBILE ADJUSTED */}
+                  <div className="absolute top-3 sm:top-4 left-3 sm:left-4">
+                    <span className="inline-flex items-center justify-center w-6 h-6 sm:w-8 sm:h-8 text-xs font-bold text-white bg-emerald-600 rounded-full">
                       {index + 1}
                     </span>
                   </div>
 
-                  <div className="flex justify-between items-start mb-4 pl-12">
-                    <div className="flex-1">
-                      <h3 className="text-xl font-semibold text-gray-800">
-                        {goal.name}
-                      </h3>
-                      <p className="text-sm text-gray-500 mt-1">
-                        Target: {formatDate(goal.targetDate)} • Status:{" "}
-                        {goal.status}
-                      </p>
+                  {/* GOAL CONTENT - MOBILE RESPONSIVE */}
+                  <div className="pl-10 sm:pl-12">
+                    <div className="flex flex-col sm:flex-row sm:justify-between sm:items-start gap-3 sm:gap-0 mb-4">
+                      <div className="flex-1 min-w-0">
+                        <h3 className="text-base sm:text-xl font-semibold text-gray-800 break-words">
+                          {goal.name}
+                        </h3>
+                        <p className="text-xs sm:text-sm text-gray-500 mt-1 break-words">
+                          Target: {formatDate(goal.targetDate)} • Status:{" "}
+                          {goal.status}
+                        </p>
+                      </div>
+
+                      <div className="text-center sm:text-right flex-shrink-0">
+                        <p className="text-xl sm:text-2xl font-bold text-emerald-600">
+                          {Math.min(
+                            Math.round(
+                              (goal.currentAmount / goal.targetAmount) * 100
+                            ) || 0,
+                            100
+                          )}
+                          %
+                        </p>
+                        <p className="text-xs sm:text-sm text-gray-500 break-all">
+                          {formatRupiah(goal.currentAmount)} /{" "}
+                          {formatRupiah(goal.targetAmount)}
+                        </p>
+                      </div>
                     </div>
 
-                    <div className="text-right">
-                      <p className="text-2xl font-bold text-emerald-600">
-                        {Math.min(
-                          Math.round(
-                            (goal.currentAmount / goal.targetAmount) * 100
-                          ) || 0,
-                          100
-                        )}
-                        %
-                      </p>
-                      <p className="text-sm text-gray-500">
-                        {formatRupiah(goal.currentAmount)} /{" "}
-                        {formatRupiah(goal.targetAmount)}
-                      </p>
+                    {/* Progress Bar - MOBILE RESPONSIVE */}
+                    <div className="w-full bg-gray-200 rounded-full h-2 sm:h-3 mb-4">
+                      <div
+                        className="bg-emerald-500 h-2 sm:h-3 rounded-full transition-all duration-500"
+                        style={{
+                          width: `${Math.min(
+                            (goal.currentAmount / goal.targetAmount) * 100,
+                            100
+                          )}%`,
+                        }}
+                      />
                     </div>
-                  </div>
 
-                  {/* Progress Bar */}
-                  <div className="w-full bg-gray-200 rounded-full h-3 mb-4">
-                    <div
-                      className="bg-emerald-500 h-3 rounded-full transition-all duration-500"
-                      style={{
-                        width: `${Math.min(
-                          (goal.currentAmount / goal.targetAmount) * 100,
-                          100
-                        )}%`,
-                      }}
-                    />
-                  </div>
+                    {/* Goal Status Messages - MOBILE RESPONSIVE */}
+                    {goal.currentAmount >= goal.targetAmount ? (
+                      <div className="mt-4 p-3 bg-green-50 border border-green-200 rounded-lg">
+                        <p className="text-green-800 text-xs sm:text-sm font-medium">
+                          🎉 Goal tercapai! Selamat atas pencapaian Anda!
+                        </p>
+                      </div>
+                    ) : (
+                      <div className="mt-4 p-3 bg-blue-50 border border-blue-200 rounded-lg">
+                        <p className="text-blue-800 text-xs sm:text-sm">
+                          💡 <strong>Tips:</strong> Tambahkan dana goal melalui
+                          tombol di bawah ini!
+                        </p>
+                      </div>
+                    )}
 
-                  {/* Goal Status Messages */}
-                  {goal.currentAmount >= goal.targetAmount ? (
-                    <div className="mt-4 p-3 bg-green-50 border border-green-200 rounded-lg">
-                      <p className="text-green-800 text-sm font-medium">
-                        🎉 Goal tercapai! Selamat atas pencapaian Anda!
-                      </p>
-                    </div>
-                  ) : (
-                    <div className="mt-4 p-3 bg-blue-50 border border-blue-200 rounded-lg">
-                      <p className="text-blue-800 text-sm">
-                        💡 <strong>Tips:</strong> Tambahkan dana goal melalui
-                        tombol di bawah ini!
-                      </p>
-                    </div>
-                  )}
-
-                  {/* Add Funds Button */}
-                  <div className="mt-4 flex justify-end">
-                    <button
-                      onClick={() => openAddFundsModal(goal)}
-                      className="bg-blue-600 text-white font-semibold px-4 py-2 rounded-lg shadow-md hover:bg-blue-700 transition-colors flex items-center gap-2"
-                    >
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        width="20"
-                        height="20"
-                        viewBox="0 0 24 24"
-                        fill="none"
-                        stroke="currentColor"
-                        strokeWidth="2.5"
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
+                    {/* Add Funds Button - MOBILE FULL WIDTH */}
+                    <div className="mt-4 flex justify-center sm:justify-end">
+                      <button
+                        onClick={() => openAddFundsModal(goal)}
+                        className="w-full sm:w-auto bg-blue-600 text-white font-semibold px-4 py-3 sm:py-2 rounded-lg shadow-md hover:bg-blue-700 active:bg-blue-800 transition-all duration-200 flex items-center justify-center gap-2 touch-manipulation text-sm transform active:scale-95"
                       >
-                        <line x1="12" y1="5" x2="12" y2="19"></line>
-                        <line x1="5" y1="12" x2="19" y2="12"></line>
-                      </svg>
-                      Tambah Dana
-                    </button>
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          width="18"
+                          height="18"
+                          viewBox="0 0 24 24"
+                          fill="none"
+                          stroke="currentColor"
+                          strokeWidth="2.5"
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                        >
+                          <line x1="12" y1="5" x2="12" y2="19"></line>
+                          <line x1="5" y1="12" x2="19" y2="12"></line>
+                        </svg>
+                        Tambah Dana
+                      </button>
+                    </div>
                   </div>
                 </div>
               ))
             ) : (
-              <div className="text-center py-10 px-6 bg-white rounded-lg shadow-md">
-                <div className="text-6xl mb-4">🎯</div>
-                <p className="text-gray-500 text-lg mb-2">
+              <div className="text-center py-8 sm:py-10 px-4 sm:px-6 bg-white rounded-lg shadow-md mx-1 sm:mx-0">
+                <div className="text-4xl sm:text-6xl mb-4">🎯</div>
+                <p className="text-gray-500 text-base sm:text-lg mb-2">
                   Anda belum memiliki goal
                 </p>
                 <p className="text-gray-400 text-sm">
@@ -931,7 +954,7 @@ const BudgetAndGoals = () => {
                 </p>
                 <button
                   onClick={() => setIsAddingGoal(true)}
-                  className="mt-4 bg-emerald-600 text-white px-6 py-2 rounded-lg font-medium hover:bg-emerald-700 transition-colors"
+                  className="mt-4 bg-emerald-600 text-white px-6 py-3 sm:py-2 rounded-lg font-medium hover:bg-emerald-700 active:bg-emerald-800 transition-all duration-200 touch-manipulation transform active:scale-95"
                 >
                   Buat Goal Pertama
                 </button>
@@ -939,57 +962,59 @@ const BudgetAndGoals = () => {
             )}
           </div>
 
-          {/* Refresh Button */}
+          {/* Refresh Button - MOBILE RESPONSIVE */}
           <div className="text-center mt-6">
             <button
               onClick={fetchGoalsFromAPI}
-              className="bg-gray-600 hover:bg-gray-700 text-white font-medium py-2 px-4 rounded-lg transition-colors duration-200"
+              className="w-full sm:w-auto bg-gray-600 hover:bg-gray-700 active:bg-gray-800 text-white font-medium py-3 sm:py-2 px-4 rounded-lg transition-all duration-200 touch-manipulation transform active:scale-95"
             >
               🔄 Refresh Data
             </button>
           </div>
         </section>
 
-        {/* Add Funds Modal */}
+        {/* Add Funds Modal - MOBILE RESPONSIVE */}
         {isAddFundsModalOpen && (
-          <div className="fixed inset-0 flex items-center justify-center z-50 bg-black bg-opacity-50">
-            <div className="bg-white rounded-lg shadow-lg p-6 max-w-sm w-full mx-4">
-              <h3 className="text-lg font-semibold text-gray-800 mb-4">
+          <div className="fixed inset-0 flex items-center justify-center z-50 bg-black bg-opacity-50 p-3 sm:p-4">
+            <div className="bg-white rounded-lg shadow-xl p-4 sm:p-6 max-w-sm w-full max-h-[90vh] overflow-y-auto">
+              <h3 className="text-base sm:text-lg font-semibold text-gray-800 mb-4">
                 Tambah Dana ke Goal
               </h3>
 
               {addFundsError && (
-                <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg mb-4">
-                  <p className="text-sm font-medium">{addFundsError}</p>
+                <div className="bg-red-50 border border-red-200 text-red-700 px-3 sm:px-4 py-3 rounded-lg mb-4">
+                  <p className="text-xs sm:text-sm font-medium break-words">
+                    {addFundsError}
+                  </p>
                 </div>
               )}
 
               <form onSubmit={handleAddFunds}>
-                {/* Goal Info */}
-                <div className="mb-4">
-                  <p className="text-sm text-gray-500">
+                {/* Goal Info - MOBILE RESPONSIVE */}
+                <div className="mb-4 space-y-1">
+                  <p className="text-xs sm:text-sm text-gray-500">
                     Goal:{" "}
-                    <span className="font-semibold text-gray-800">
+                    <span className="font-semibold text-gray-800 break-words">
                       {selectedGoal?.name}
                     </span>
                   </p>
-                  <p className="text-sm text-gray-500">
+                  <p className="text-xs sm:text-sm text-gray-500">
                     Target:{" "}
-                    <span className="font-semibold text-gray-800">
+                    <span className="font-semibold text-gray-800 break-all">
                       {formatRupiah(selectedGoal?.targetAmount)}
                     </span>
                   </p>
-                  <p className="text-sm text-gray-500">
+                  <p className="text-xs sm:text-sm text-gray-500">
                     Saat Ini:{" "}
-                    <span className="font-semibold text-gray-800">
+                    <span className="font-semibold text-gray-800 break-all">
                       {formatRupiah(selectedGoal?.currentAmount)}
                     </span>
                   </p>
                 </div>
 
-                {/* Amount Input */}
+                {/* Amount Input - MOBILE RESPONSIVE */}
                 <div className="mb-4">
-                  <label className="block text-sm font-semibold text-gray-700 mb-2">
+                  <label className="block text-xs sm:text-sm font-semibold text-gray-700 mb-2">
                     Jumlah Dana *
                   </label>
                   <div className="relative">
@@ -1001,31 +1026,31 @@ const BudgetAndGoals = () => {
                       value={addFundsAmount}
                       onChange={handleAddFundsAmountChange}
                       placeholder="100000"
-                      className="w-full border border-gray-300 rounded-lg pl-12 pr-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500"
+                      className="w-full border border-gray-300 rounded-lg pl-12 pr-3 py-2.5 sm:py-2 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 touch-manipulation"
                       required
                     />
                   </div>
                   {addFundsAmount && (
-                    <p className="text-xs text-gray-500 mt-1">
+                    <p className="text-xs text-gray-500 mt-1 break-words">
                       {parseFloat(addFundsAmount || 0).toLocaleString("id-ID")}{" "}
                       Rupiah
                     </p>
                   )}
                 </div>
 
-                {/* Buttons */}
-                <div className="flex gap-2">
+                {/* Buttons - MOBILE RESPONSIVE */}
+                <div className="flex flex-col sm:flex-row gap-2 sm:gap-2">
                   <button
                     type="button"
                     onClick={closeAddFundsModal}
-                    className="flex-1 bg-gray-200 hover:bg-gray-300 text-gray-800 font-semibold px-4 py-2 rounded-lg transition-colors"
+                    className="w-full sm:flex-1 bg-gray-200 hover:bg-gray-300 active:bg-gray-400 text-gray-800 font-semibold px-4 py-3 sm:py-2 rounded-lg transition-all duration-200 touch-manipulation transform active:scale-95"
                   >
                     Batal
                   </button>
                   <button
                     type="submit"
                     disabled={isAddingFunds}
-                    className={`flex-1 bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded-lg shadow-md transition-all duration-200 ${
+                    className={`w-full sm:flex-1 bg-blue-600 hover:bg-blue-700 active:bg-blue-800 text-white font-semibold py-3 sm:py-2 px-4 rounded-lg shadow-md transition-all duration-200 touch-manipulation transform active:scale-95 ${
                       isAddingFunds ? "opacity-70 cursor-not-allowed" : ""
                     }`}
                   >
@@ -1062,6 +1087,9 @@ const BudgetAndGoals = () => {
             </div>
           </div>
         )}
+
+        {/* Bottom Spacing untuk Mobile */}
+        <div className="h-4 sm:h-0"></div>
       </div>
     </>
   );

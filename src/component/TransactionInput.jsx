@@ -183,51 +183,82 @@ const TransactionInputPage = () => {
     <div className="min-h-screen bg-gray-50">
       <Navbar />
 
+      {/* MAIN CONTAINER - FIXED MOBILE PADDING */}
       <main
-        className={`pt-24 max-w-4xl mx-auto px-4 sm:px-8 space-y-6 transition-opacity duration-700 ease-in-out ${
+        className={`pt-16 pb-24 sm:pt-20 sm:pb-8 lg:pt-24 max-w-4xl mx-auto px-3 sm:px-6 lg:px-8 space-y-4 sm:space-y-6 transition-opacity duration-700 ease-in-out ${
           isMounted ? "opacity-100" : "opacity-0"
         }`}
       >
-        <h1 className="text-2xl sm:text-3xl font-bold text-gray-800 mb-6 sm:mb-8">
+        {/* HEADER - MOBILE RESPONSIVE */}
+        <h1 className="text-xl sm:text-2xl lg:text-3xl font-bold text-gray-800 mb-4 sm:mb-6 lg:mb-8 text-center sm:text-left">
           Input Transaksi Baru
         </h1>
 
-        {/* Success/Error Message */}
+        {/* Success/Error Message - MOBILE RESPONSIVE */}
         {message.text && (
           <div
-            className={`p-4 rounded-lg mb-6 ${
+            className={`p-3 sm:p-4 rounded-lg mb-4 sm:mb-6 mx-1 sm:mx-0 ${
               message.type === "success"
                 ? "bg-green-50 border border-green-200 text-green-800"
                 : "bg-red-50 border border-red-200 text-red-800"
             }`}
           >
-            <div className="flex">
-              <div className="ml-3">
-                <p className="text-sm font-medium">{message.text}</p>
+            <div className="flex items-start gap-3">
+              <div className="flex-shrink-0 mt-0.5">
+                {message.type === "success" ? (
+                  <svg
+                    className="h-4 w-4 sm:h-5 sm:w-5 text-green-400"
+                    viewBox="0 0 20 20"
+                    fill="currentColor"
+                  >
+                    <path
+                      fillRule="evenodd"
+                      d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
+                    />
+                  </svg>
+                ) : (
+                  <svg
+                    className="h-4 w-4 sm:h-5 sm:w-5 text-red-400"
+                    viewBox="0 0 20 20"
+                    fill="currentColor"
+                  >
+                    <path
+                      fillRule="evenodd"
+                      d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z"
+                    />
+                  </svg>
+                )}
+              </div>
+              <div className="flex-1 min-w-0">
+                <p className="text-xs sm:text-sm font-medium break-words">
+                  {message.text}
+                </p>
               </div>
             </div>
           </div>
         )}
 
+        {/* FORM CONTAINER - MOBILE RESPONSIVE */}
         <form
           onSubmit={handleSaveTransaction}
-          className={`bg-white rounded-xl shadow-xl p-6 sm:p-8 transition-all duration-500 ease-in-out ${
+          className={`bg-white rounded-xl shadow-xl p-4 sm:p-6 lg:p-8 mx-1 sm:mx-0 transition-all duration-500 ease-in-out ${
             isMounted
               ? "transform scale-100 opacity-100"
               : "transform scale-95 opacity-0"
           }`}
         >
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-6 mb-8">
-            {/* Transaction Type */}
-            <div>
-              <label className="block text-sm sm:text-base font-semibold text-gray-700 mb-2">
+          {/* FORM FIELDS - MOBILE OPTIMIZED GRID */}
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6 lg:gap-8 mb-6 sm:mb-8">
+            {/* Transaction Type - MOBILE RESPONSIVE */}
+            <div className="lg:col-span-2">
+              <label className="block text-sm sm:text-base font-semibold text-gray-700 mb-3">
                 Jenis Transaksi
               </label>
               <div className="flex space-x-2 sm:space-x-3">
                 <button
                   type="button"
                   onClick={() => setTransactionType("INCOME")}
-                  className={`flex-1 py-3 px-4 rounded-lg text-sm sm:text-base font-medium border-2 transition-all duration-200 ease-in-out transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-offset-1
+                  className={`flex-1 py-3 sm:py-3 px-3 sm:px-4 rounded-lg text-xs sm:text-sm lg:text-base font-medium border-2 transition-all duration-200 ease-in-out transform active:scale-95 focus:outline-none focus:ring-2 focus:ring-offset-1 touch-manipulation
                   ${
                     transactionType === "INCOME"
                       ? "bg-emerald-600 text-white border-emerald-700 focus:ring-emerald-500"
@@ -239,7 +270,7 @@ const TransactionInputPage = () => {
                 <button
                   type="button"
                   onClick={() => setTransactionType("EXPENSE")}
-                  className={`flex-1 py-3 px-4 rounded-lg text-sm sm:text-base font-medium border-2 transition-all duration-200 ease-in-out transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-offset-1
+                  className={`flex-1 py-3 sm:py-3 px-3 sm:px-4 rounded-lg text-xs sm:text-sm lg:text-base font-medium border-2 transition-all duration-200 ease-in-out transform active:scale-95 focus:outline-none focus:ring-2 focus:ring-offset-1 touch-manipulation
                   ${
                     transactionType === "EXPENSE"
                       ? "bg-red-500 text-white border-red-600 focus:ring-red-400"
@@ -251,7 +282,7 @@ const TransactionInputPage = () => {
               </div>
             </div>
 
-            {/* Title */}
+            {/* Title - MOBILE RESPONSIVE */}
             <div>
               <label
                 htmlFor="title"
@@ -265,13 +296,13 @@ const TransactionInputPage = () => {
                 id="title"
                 value={title}
                 onChange={(e) => setTitle(e.target.value)}
-                className="w-full border border-gray-300 rounded-lg px-3 py-3 text-sm sm:text-base focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 shadow-sm"
+                className="w-full border border-gray-300 rounded-lg px-3 py-3 sm:py-3 text-sm sm:text-base focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 shadow-sm touch-manipulation"
                 placeholder="Contoh: Makan siang, Gaji bulanan, dll."
                 required
               />
             </div>
 
-            {/* Amount */}
+            {/* Amount - MOBILE RESPONSIVE */}
             <div>
               <label
                 htmlFor="amount"
@@ -289,20 +320,20 @@ const TransactionInputPage = () => {
                   id="amount"
                   value={amount}
                   onChange={handleAmountChange}
-                  className="w-full border border-gray-300 rounded-lg pl-12 sm:pl-14 pr-3 py-3 text-sm sm:text-base focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 shadow-sm"
+                  className="w-full border border-gray-300 rounded-lg pl-12 sm:pl-14 pr-3 py-3 sm:py-3 text-sm sm:text-base focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 shadow-sm touch-manipulation"
                   placeholder="0"
                   required
                 />
               </div>
               {amount && (
-                <p className="text-xs text-gray-500 mt-1">
+                <p className="text-xs sm:text-sm text-gray-500 mt-1 break-words">
                   {parseFloat(amount || 0).toLocaleString("id-ID")} Rupiah
                 </p>
               )}
             </div>
 
-            {/* Transaction Date */}
-            <div>
+            {/* Transaction Date - MOBILE RESPONSIVE */}
+            <div className="lg:col-span-2">
               <label
                 htmlFor="transactionDate"
                 className="block text-sm sm:text-base font-semibold text-gray-700 mb-2"
@@ -315,27 +346,29 @@ const TransactionInputPage = () => {
                 id="transactionDate"
                 value={transactionDate}
                 onChange={(e) => setTransactionDate(e.target.value)}
-                className="w-full border border-gray-300 rounded-lg px-3 py-3 text-sm sm:text-base focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 shadow-sm"
+                className="w-full sm:w-auto border border-gray-300 rounded-lg px-3 py-3 sm:py-3 text-sm sm:text-base focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 shadow-sm touch-manipulation"
                 required
               />
             </div>
           </div>
 
-          {/* Categories (Optional) */}
-          <div className="mb-8">
+          {/* Categories Section - MOBILE OPTIMIZED */}
+          <div className="mb-6 sm:mb-8">
             <label className="block text-sm sm:text-base font-semibold text-gray-700 mb-3">
               Kategori (Opsional)
-              <span className="text-xs text-gray-500 font-normal ml-2">
+              <span className="text-xs text-gray-500 font-normal ml-2 block sm:inline">
                 Kosongkan untuk deteksi otomatis
               </span>
             </label>
-            <div className="overflow-x-auto">
-              <div className="grid grid-cols-2 sm:grid-cols-4 md:grid-cols-6 lg:grid-cols-8 gap-3 sm:gap-4 min-w-[400px]">
-                {/* Reset Category Button */}
+
+            {/* MOBILE SCROLLABLE CATEGORIES */}
+            <div className="overflow-x-auto -mx-1 px-1">
+              <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 lg:grid-cols-8 gap-2 sm:gap-3 lg:gap-4 min-w-[300px] sm:min-w-0">
+                {/* Reset Category Button - MOBILE OPTIMIZED */}
                 <button
                   type="button"
                   onClick={() => setSelectedCategory("")}
-                  className={`flex flex-col items-center justify-center w-20 h-20 sm:w-24 sm:h-24 p-2 border rounded-lg shadow-sm cursor-pointer transition-all duration-200 ease-in-out transform hover:scale-105
+                  className={`flex flex-col items-center justify-center w-16 h-16 sm:w-20 sm:h-20 lg:w-24 lg:h-24 p-1 sm:p-2 border rounded-lg shadow-sm cursor-pointer transition-all duration-200 ease-in-out transform active:scale-95 touch-manipulation
                     ${
                       selectedCategory === ""
                         ? "bg-gray-600 text-white border-gray-700 ring-2 ring-gray-500 ring-offset-1"
@@ -343,14 +376,14 @@ const TransactionInputPage = () => {
                     }`}
                 >
                   <div
-                    className={`w-8 h-8 sm:w-10 sm:h-10 rounded-full flex items-center justify-center mb-1 text-lg sm:text-xl
+                    className={`w-6 h-6 sm:w-8 sm:h-8 lg:w-10 lg:h-10 rounded-full flex items-center justify-center mb-1 text-sm sm:text-lg lg:text-xl
                     ${selectedCategory === "" ? "bg-gray-700" : "bg-gray-200"}
                   `}
                   >
                     ✨
                   </div>
                   <span
-                    className={`text-xs sm:text-sm font-medium text-center ${
+                    className={`text-xs sm:text-sm font-medium text-center leading-tight ${
                       selectedCategory === "" ? "text-white" : "text-gray-600"
                     }`}
                   >
@@ -358,31 +391,58 @@ const TransactionInputPage = () => {
                   </span>
                 </button>
 
+                {/* Category Buttons - MOBILE OPTIMIZED */}
                 {categories.map((category) => (
-                  <CategoryIconPlaceholder
+                  <button
                     key={category.id}
-                    name={category.name}
-                    isActive={selectedCategory === category.name}
+                    type="button"
                     onClick={() => setSelectedCategory(category.name)}
-                  />
+                    className={`flex flex-col items-center justify-center w-16 h-16 sm:w-20 sm:h-20 lg:w-24 lg:h-24 p-1 sm:p-2 border rounded-lg shadow-sm cursor-pointer transition-all duration-200 ease-in-out transform active:scale-95 touch-manipulation
+                      ${
+                        selectedCategory === category.name
+                          ? "bg-emerald-600 text-white border-emerald-700 ring-2 ring-emerald-500 ring-offset-1"
+                          : "bg-white hover:bg-emerald-50 text-gray-700 border-gray-300"
+                      }`}
+                  >
+                    <div
+                      className={`w-6 h-6 sm:w-8 sm:h-8 lg:w-10 lg:h-10 rounded-full flex items-center justify-center mb-1 text-sm sm:text-lg lg:text-xl
+                      ${
+                        selectedCategory === category.name
+                          ? "bg-emerald-700"
+                          : "bg-gray-200"
+                      }
+                    `}
+                    >
+                      {category.name.substring(0, 1)}
+                    </div>
+                    <span
+                      className={`text-xs sm:text-sm font-medium text-center leading-tight ${
+                        selectedCategory === category.name
+                          ? "text-white"
+                          : "text-gray-600"
+                      }`}
+                    >
+                      {category.name}
+                    </span>
+                  </button>
                 ))}
               </div>
             </div>
           </div>
 
-          {/* Save Button */}
-          <div className="flex justify-end pt-4">
+          {/* Save Button - MOBILE RESPONSIVE */}
+          <div className="flex justify-center sm:justify-end pt-4">
             <button
               type="submit"
               disabled={isLoading}
-              className={`bg-emerald-600 hover:bg-emerald-700 text-white font-semibold py-3 px-6 sm:py-3 sm:px-8 rounded-lg shadow-md focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:ring-offset-2 transition-all duration-300 ease-in-out transform hover:scale-105
+              className={`w-full sm:w-auto bg-emerald-600 hover:bg-emerald-700 active:bg-emerald-800 text-white font-semibold py-3 sm:py-3 px-6 sm:px-8 rounded-lg shadow-md focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:ring-offset-2 transition-all duration-300 ease-in-out transform active:scale-95 touch-manipulation
               ${isLoading ? "opacity-70 cursor-not-allowed" : ""}
             `}
             >
               {isLoading ? (
                 <div className="flex items-center justify-center">
                   <svg
-                    className="animate-spin -ml-1 mr-3 h-5 w-5 text-white"
+                    className="animate-spin -ml-1 mr-3 h-4 w-4 sm:h-5 sm:w-5 text-white"
                     xmlns="http://www.w3.org/2000/svg"
                     fill="none"
                     viewBox="0 0 24 24"
@@ -409,12 +469,12 @@ const TransactionInputPage = () => {
             </button>
           </div>
 
-          {/* Info */}
-          <div className="mt-6 p-4 bg-blue-50 border border-blue-200 rounded-lg">
-            <div className="flex">
-              <div className="flex-shrink-0">
+          {/* Info Tips - MOBILE RESPONSIVE */}
+          <div className="mt-4 sm:mt-6 p-3 sm:p-4 bg-blue-50 border border-blue-200 rounded-lg">
+            <div className="flex items-start gap-3">
+              <div className="flex-shrink-0 mt-0.5">
                 <svg
-                  className="h-5 w-5 text-blue-400"
+                  className="h-4 w-4 sm:h-5 sm:w-5 text-blue-400"
                   viewBox="0 0 20 20"
                   fill="currentColor"
                 >
@@ -425,8 +485,8 @@ const TransactionInputPage = () => {
                   />
                 </svg>
               </div>
-              <div className="ml-3">
-                <p className="text-sm text-blue-700">
+              <div className="flex-1 min-w-0">
+                <p className="text-xs sm:text-sm text-blue-700 break-words">
                   <strong>Tips:</strong> Kategori tidak wajib diisi. Jika
                   dikosongkan, sistem akan melakukan kategorisasi otomatis
                   berdasarkan judul transaksi.
@@ -435,6 +495,9 @@ const TransactionInputPage = () => {
             </div>
           </div>
         </form>
+
+        {/* Bottom Spacing untuk Mobile */}
+        <div className="h-4 sm:h-0"></div>
       </main>
     </div>
   );

@@ -154,7 +154,7 @@ const TransactionListPage = () => {
     return (
       <div className="min-h-screen bg-gray-50">
         <Navbar />
-        <main className="pt-24 max-w-5xl mx-auto px-4 sm:px-8">
+        <main className="pt-16 pb-24 sm:pt-20 sm:pb-8 lg:pt-24 max-w-5xl mx-auto px-3 sm:px-6 lg:px-8">
           <div className="flex items-center justify-center h-64">
             <div className="text-center">
               <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-emerald-600 mx-auto"></div>
@@ -171,8 +171,8 @@ const TransactionListPage = () => {
     return (
       <div className="min-h-screen bg-gray-50">
         <Navbar />
-        <main className="pt-24 max-w-5xl mx-auto px-4 sm:px-8">
-          <div className="bg-red-50 border border-red-200 rounded-lg p-4">
+        <main className="pt-16 pb-24 sm:pt-20 sm:pb-8 lg:pt-24 max-w-5xl mx-auto px-3 sm:px-6 lg:px-8">
+          <div className="bg-red-50 border border-red-200 rounded-lg p-4 mx-1 sm:mx-0">
             <div className="flex">
               <div className="ml-3">
                 <h3 className="text-sm font-medium text-red-800">Error</h3>
@@ -198,30 +198,31 @@ const TransactionListPage = () => {
       <Navbar />
 
       <main
-        className={`pt-24 max-w-5xl mx-auto px-4 sm:px-8 space-y-6 transition-opacity duration-700 ease-in-out ${
+        className={`pt-16 pb-24 sm:pt-20 sm:pb-8 lg:pt-24 max-w-5xl mx-auto px-3 sm:px-6 lg:px-8 space-y-4 sm:space-y-6 transition-opacity duration-700 ease-in-out ${
           isMounted ? "opacity-100" : "opacity-0"
         }`}
       >
-        <header className="mb-6 sm:mb-8">
-          <div className="flex justify-between items-start">
-            <div>
-              <h1 className="text-2xl sm:text-3xl font-bold text-gray-800">
+        {/* HEADER - MOBILE RESPONSIVE */}
+        <header className="mb-4 sm:mb-6 lg:mb-8">
+          <div className="flex flex-col sm:flex-row sm:justify-between sm:items-start gap-3 sm:gap-0">
+            <div className="text-center sm:text-left">
+              <h1 className="text-xl sm:text-2xl lg:text-3xl font-bold text-gray-800">
                 Riwayat Transaksi
               </h1>
-              <p className="text-sm text-gray-600 mt-1">
+              <p className="text-xs sm:text-sm text-gray-600 mt-1">
                 Lihat semua pemasukan dan pengeluaran Anda.
               </p>
             </div>
 
-            {/* TAMBAH Refresh Button di Header */}
+            {/* Refresh Button - MOBILE RESPONSIVE */}
             <button
               onClick={handleRefresh}
               disabled={isRefreshing}
-              className={`flex items-center gap-2 px-4 py-2 rounded-lg font-medium transition-all duration-200 
+              className={`w-full sm:w-auto flex items-center justify-center gap-2 px-4 py-3 sm:py-2 rounded-lg font-medium transition-all duration-200 touch-manipulation transform active:scale-95
                 ${
                   isRefreshing
                     ? "bg-gray-400 text-white cursor-not-allowed"
-                    : "bg-emerald-600 hover:bg-emerald-700 text-white transform hover:scale-105"
+                    : "bg-emerald-600 hover:bg-emerald-700 text-white"
                 }`}
             >
               <svg
@@ -241,47 +242,56 @@ const TransactionListPage = () => {
                 <path d="M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16" />
                 <path d="M3 21v-5h5" />
               </svg>
-              {isRefreshing ? "Memperbarui..." : "Refresh"}
+              <span className="text-sm">
+                {isRefreshing ? "Memperbarui..." : "Refresh"}
+              </span>
             </button>
           </div>
 
-          {/* Summary Info */}
-          <div className="mt-4 grid grid-cols-1 sm:grid-cols-3 gap-4">
-            <div className="bg-white p-4 rounded-lg shadow-sm">
-              <p className="text-sm text-gray-500">Total Transaksi</p>
-              <p className="text-xl font-bold text-gray-900">
+          {/* Summary Info - MOBILE RESPONSIVE */}
+          <div className="mt-4 grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-4">
+            <div className="bg-white p-3 sm:p-4 rounded-lg shadow-sm mx-1 sm:mx-0">
+              <p className="text-xs sm:text-sm text-gray-500">
+                Total Transaksi
+              </p>
+              <p className="text-lg sm:text-xl font-bold text-gray-900">
                 {transactions.length}
               </p>
             </div>
-            <div className="bg-white p-4 rounded-lg shadow-sm">
-              <p className="text-sm text-green-600">Total Pemasukan</p>
-              <p className="text-xl font-bold text-green-600">
+            <div className="bg-white p-3 sm:p-4 rounded-lg shadow-sm mx-1 sm:mx-0">
+              <p className="text-xs sm:text-sm text-green-600">
+                Total Pemasukan
+              </p>
+              <p className="text-lg sm:text-xl font-bold text-green-600">
                 {transactions.filter((t) => t.type === "INCOME").length}
               </p>
             </div>
-            <div className="bg-white p-4 rounded-lg shadow-sm">
-              <p className="text-sm text-red-600">Total Pengeluaran</p>
-              <p className="text-xl font-bold text-red-600">
+            <div className="bg-white p-3 sm:p-4 rounded-lg shadow-sm mx-1 sm:mx-0">
+              <p className="text-xs sm:text-sm text-red-600">
+                Total Pengeluaran
+              </p>
+              <p className="text-lg sm:text-xl font-bold text-red-600">
                 {transactions.filter((t) => t.type === "EXPENSE").length}
               </p>
             </div>
           </div>
         </header>
 
-        {/* Filter dan Search Bar */}
+        {/* Filter dan Search Bar - MOBILE RESPONSIVE */}
         <div
-          className={`bg-white rounded-xl shadow-md p-4 mb-6 transition-all duration-500 ease-in-out ${
+          className={`bg-white rounded-xl shadow-md p-4 mb-4 sm:mb-6 mx-1 sm:mx-0 transition-all duration-500 ease-in-out ${
             isMounted
               ? "transform scale-100 opacity-100"
               : "transform scale-95 opacity-0"
           }`}
         >
-          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-            <div className="relative flex-grow sm:max-w-xs">
+          <div className="flex flex-col gap-4">
+            {/* Search Bar - MOBILE RESPONSIVE */}
+            <div className="relative">
               <input
                 type="text"
                 placeholder="Cari judul, kategori, atau deskripsi..."
-                className="w-full pl-10 pr-4 py-2.5 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 text-sm"
+                className="w-full pl-10 pr-4 py-3 sm:py-2.5 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 text-sm touch-manipulation"
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
               />
@@ -302,10 +312,12 @@ const TransactionListPage = () => {
                 </svg>
               </div>
             </div>
-            <div className="flex space-x-2">
+
+            {/* Filter Buttons - MOBILE RESPONSIVE */}
+            <div className="flex flex-col sm:flex-row gap-2">
               <button
                 onClick={() => handleFilterChange("all")}
-                className={`px-4 py-2 rounded-lg text-sm font-medium border transition-colors duration-200 ${
+                className={`px-4 py-3 sm:py-2 rounded-lg text-sm font-medium border transition-colors duration-200 touch-manipulation transform active:scale-95 ${
                   filterType === "all"
                     ? "bg-emerald-600 text-white border-emerald-600"
                     : "bg-gray-100 text-gray-700 border-gray-300 hover:bg-gray-200"
@@ -315,7 +327,7 @@ const TransactionListPage = () => {
               </button>
               <button
                 onClick={() => handleFilterChange("INCOME")}
-                className={`px-4 py-2 rounded-lg text-sm font-medium border transition-colors duration-200 ${
+                className={`px-4 py-3 sm:py-2 rounded-lg text-sm font-medium border transition-colors duration-200 touch-manipulation transform active:scale-95 ${
                   filterType === "INCOME"
                     ? "bg-green-600 text-white border-green-600"
                     : "bg-gray-100 text-gray-700 border-gray-300 hover:bg-gray-200"
@@ -326,7 +338,7 @@ const TransactionListPage = () => {
               </button>
               <button
                 onClick={() => handleFilterChange("EXPENSE")}
-                className={`px-4 py-2 rounded-lg text-sm font-medium border transition-colors duration-200 ${
+                className={`px-4 py-3 sm:py-2 rounded-lg text-sm font-medium border transition-colors duration-200 touch-manipulation transform active:scale-95 ${
                   filterType === "EXPENSE"
                     ? "bg-red-500 text-white border-red-500"
                     : "bg-gray-100 text-gray-700 border-gray-300 hover:bg-gray-200"
@@ -339,30 +351,30 @@ const TransactionListPage = () => {
           </div>
         </div>
 
-        {/* Results Info */}
+        {/* Results Info - MOBILE RESPONSIVE */}
         {searchTerm && (
-          <div className="text-sm text-gray-600 mb-4">
+          <div className="text-xs sm:text-sm text-gray-600 mb-4 mx-1 sm:mx-0">
             Menampilkan {filteredTransactions.length} dari {transactions.length}{" "}
             transaksi untuk pencarian "{searchTerm}"
           </div>
         )}
 
-        {/* TAMBAH Refresh Loading Overlay */}
+        {/* Refresh Loading Overlay - MOBILE RESPONSIVE */}
         <div className="relative">
           {isRefreshing && (
-            <div className="absolute top-0 left-0 right-0 bg-emerald-50 border border-emerald-200 rounded-lg p-3 mb-4 z-10">
+            <div className="absolute top-0 left-0 right-0 bg-emerald-50 border border-emerald-200 rounded-lg p-3 mb-4 z-10 mx-1 sm:mx-0">
               <div className="flex items-center text-emerald-700">
                 <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-emerald-600 mr-3"></div>
-                <span className="text-sm font-medium">
+                <span className="text-xs sm:text-sm font-medium">
                   Sedang memperbarui data transaksi...
                 </span>
               </div>
             </div>
           )}
 
-          {/* Transaction Table */}
+          {/* MOBILE CARD VIEW + DESKTOP TABLE VIEW */}
           <div
-            className={`bg-white rounded-xl shadow-xl transition-all duration-500 ease-in-out delay-100 
+            className={`bg-white rounded-xl shadow-xl transition-all duration-500 ease-in-out delay-100 mx-1 sm:mx-0
               ${isRefreshing ? "opacity-75" : "opacity-100"}
               ${
                 isMounted
@@ -371,7 +383,97 @@ const TransactionListPage = () => {
               }
             `}
           >
-            <div className="overflow-x-auto rounded-xl">
+            {/* MOBILE CARD VIEW - HIDDEN ON DESKTOP */}
+            <div className="block sm:hidden">
+              {filteredTransactions.length > 0 ? (
+                <div className="divide-y divide-gray-200">
+                  {filteredTransactions
+                    .sort(
+                      (a, b) =>
+                        new Date(b.transaction_date) -
+                        new Date(a.transaction_date)
+                    )
+                    .map((transaction) => (
+                      <div
+                        key={transaction.id}
+                        className="p-4 hover:bg-emerald-50/50 transition-colors duration-150"
+                      >
+                        {/* Card Header */}
+                        <div className="flex justify-between items-start mb-2">
+                          <div className="flex-1 min-w-0">
+                            <h3 className="text-sm font-semibold text-gray-900 break-words">
+                              {transaction.title || "Tanpa Judul"}
+                            </h3>
+                            <p className="text-xs text-gray-500 mt-1">
+                              {formatDate(transaction.transaction_date)}
+                            </p>
+                          </div>
+                          <div className="text-right flex-shrink-0 ml-2">
+                            <p
+                              className={`text-sm font-bold break-all ${
+                                transaction.type === "INCOME"
+                                  ? "text-green-600"
+                                  : "text-red-600"
+                              }`}
+                            >
+                              {transaction.type === "EXPENSE" && "- "}
+                              {formatCurrency(parseFloat(transaction.amount))}
+                            </p>
+                          </div>
+                        </div>
+
+                        {/* Card Body */}
+                        <div className="flex flex-wrap gap-2 text-xs">
+                          <span
+                            className={`px-2 py-1 inline-flex leading-4 font-medium rounded-full 
+                            ${
+                              transaction.type === "INCOME"
+                                ? "bg-green-100 text-green-800"
+                                : "bg-red-100 text-red-800"
+                            }`}
+                          >
+                            {transaction.category || "Lainnya"}
+                          </span>
+                          <span
+                            className={`px-2 py-1 inline-flex leading-4 font-medium rounded-full ${
+                              transaction.type === "INCOME"
+                                ? "bg-green-50 text-green-700 border border-green-200"
+                                : "bg-red-50 text-red-700 border border-red-200"
+                            }`}
+                          >
+                            {transaction.type === "INCOME"
+                              ? "Pemasukan"
+                              : "Pengeluaran"}
+                          </span>
+                          <span
+                            className={`px-2 py-1 inline-flex leading-4 font-medium rounded-full ${
+                              transaction.anomaly_status === "Normal"
+                                ? "bg-green-100 text-green-800"
+                                : transaction.anomaly_status === "Anomaly"
+                                ? "bg-red-100 text-red-800"
+                                : "bg-yellow-100 text-yellow-800"
+                            }`}
+                          >
+                            {transaction.anomaly_status || "Normal"}
+                          </span>
+                        </div>
+                      </div>
+                    ))}
+                </div>
+              ) : (
+                <div className="p-6 text-center text-gray-500 italic">
+                  <div className="text-4xl mb-2">📊</div>
+                  {transactions.length === 0
+                    ? "Belum ada data transaksi. Tambahkan transaksi pertama Anda!"
+                    : `Tidak ada transaksi yang cocok dengan ${
+                        searchTerm ? 'pencarian "' + searchTerm + '"' : "filter"
+                      } Anda.`}
+                </div>
+              )}
+            </div>
+
+            {/* DESKTOP TABLE VIEW - HIDDEN ON MOBILE */}
+            <div className="hidden sm:block overflow-x-auto rounded-xl">
               <table className="min-w-full divide-y divide-gray-200">
                 <thead className="bg-gray-50 sticky top-0">
                   <tr>
@@ -402,7 +504,7 @@ const TransactionListPage = () => {
                         (a, b) =>
                           new Date(b.transaction_date) -
                           new Date(a.transaction_date)
-                      ) // Sort by date, newest first
+                      )
                       .map((transaction) => (
                         <tr
                           key={transaction.id}
@@ -489,16 +591,16 @@ const TransactionListPage = () => {
           </div>
         </div>
 
-        {/* UPDATE Bottom Refresh Button */}
-        <div className="text-center mt-6">
+        {/* Bottom Refresh Button - MOBILE RESPONSIVE */}
+        <div className="text-center mt-4 sm:mt-6">
           <button
             onClick={handleRefresh}
             disabled={isRefreshing}
-            className={`flex items-center gap-2 mx-auto px-6 py-3 rounded-lg font-medium transition-all duration-200 
+            className={`w-full sm:w-auto flex items-center justify-center gap-2 px-6 py-3 rounded-lg font-medium transition-all duration-200 touch-manipulation transform active:scale-95
               ${
                 isRefreshing
                   ? "bg-gray-400 text-white cursor-not-allowed"
-                  : "bg-emerald-600 hover:bg-emerald-700 text-white transform hover:scale-105"
+                  : "bg-emerald-600 hover:bg-emerald-700 text-white"
               }`}
           >
             <svg
@@ -521,6 +623,9 @@ const TransactionListPage = () => {
             {isRefreshing ? "Memperbarui Data..." : "🔄 Refresh Data"}
           </button>
         </div>
+
+        {/* Bottom Spacing untuk Mobile */}
+        <div className="h-4 sm:h-0"></div>
       </main>
     </div>
   );
