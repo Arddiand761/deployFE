@@ -1,5 +1,6 @@
 /* eslint-disable no-unused-vars */
 import React, { useState, useEffect } from "react";
+import { Link } from "react-router-dom"; // ✅ Sudah ada
 import {
   LineChart,
   Line,
@@ -446,12 +447,12 @@ const HomePage = () => {
               Selamat datang kembali! Berikut ringkasan keuangan Anda.
             </p>
           </div>
-          <a
-            href="/transactionInput"
+          <Link
+            to="/transactionInput"
             className="inline-block bg-emerald-600 hover:bg-emerald-700 text-white font-semibold px-6 py-3 rounded-lg shadow-md transition-all duration-200"
           >
             + Input Transaksi
-          </a>
+          </Link>
         </div>
 
         {/* Top Cards */}
@@ -746,8 +747,8 @@ const HomePage = () => {
 
           {/* Tambah Goal Button */}
           <div className="mt-6 pt-4 border-t border-gray-200">
-            <a
-              href="/goals"
+            <Link
+              to="/goals"
               className="w-full bg-emerald-50 hover:bg-emerald-100 text-emerald-700 font-medium py-3 px-4 rounded-lg border-2 border-dashed border-emerald-300 transition-all duration-200 flex items-center justify-center gap-2"
             >
               <svg
@@ -765,7 +766,7 @@ const HomePage = () => {
                 <line x1="5" y1="12" x2="19" y2="12"></line>
               </svg>
               Tambah Goal Baru
-            </a>
+            </Link>
           </div>
         </div>
 
